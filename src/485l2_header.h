@@ -9,6 +9,6 @@ typedef struct
     uint8_t port; //Also a type of data field, 0 reserved for control pkts
     uint16_t data_length;
     uint32_t data_crc; //this field is zeroed before calculating and checking.
-    uint8_t data[];
-}485l2_header;
+    uint8_t data[]; //TODO: add c++ compiler exception to allow this naughty c code
+}485l2_pkt_header;
 
