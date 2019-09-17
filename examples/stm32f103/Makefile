@@ -5,9 +5,11 @@
 TARGET = stm32f103
 
 SRCS_C = \
-    main.c
+    main.c \
+    hal/debug.c \
+    util/printf.c
 
-INCLUDE = src src/stm
+INCLUDE = src src/hal src/util
 
 BUILD_DIR = build
 
@@ -30,6 +32,7 @@ STM_SRCS_C = \
 	Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c \
 	Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c \
 	Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c \
+	Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c \
 	Src/main.c \
 	Src/stm32f1xx_hal_msp.c \
 	Src/system_stm32f1xx.c
