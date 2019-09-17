@@ -7,11 +7,26 @@ TARGET = stm32f103
 SRCS_C = \
     main.c \
     hal/debug.c \
-    util/printf.c
+    hal/snet.c
 
-INCLUDE = src src/hal src/util
+INCLUDE = src src/hal
 
 BUILD_DIR = build
+
+
+#
+# TODO: We'll tidy this bit up later
+#
+SNET_DIR ?= ../..
+
+SNET_SRCS_C = \
+    src/snet.c \
+    src/util/printf.c
+
+SNET_INCLUDE = \
+    include
+
+INCLUDE += $(addprefix $(SNET_DIR)/, $(SNET_INCLUDE))
 
 
 #
@@ -71,6 +86,7 @@ LFLAGS += -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
 
 OBJS = 	$(addprefix $(BUILD_DIR)/src/, $(SRCS_C:.c=.o)) \
 	$(addprefix $(BUILD_DIR)/src/, $(SRCS_S:.s=.o)) \
+	$(addprefix $(BUILD_DIR)/snet/, $(SNET_SRCS_C:.c=.o)) \
 	$(addprefix $(BUILD_DIR)/vendor/, $(STM_SRCS_C:.c=.o)) \
 	$(addprefix $(BUILD_DIR)/vendor/, $(STM_SRCS_S:.s=.o))
 
@@ -89,6 +105,12 @@ $(BUILD_DIR)/src/%.o: src/%.c
 $(BUILD_DIR)/src/%.o: src/%.s
 	$(MKDIR) -p $(dir $@)
 	$(CC) $< $(CFLAGS) $(CFLAGS_WARN) -c -o $@
+
+# TODO: We'll move this out too. We want SNet to build itself and then link into
+# the example!
+$(BUILD_DIR)/snet/%.o: $(SNET_DIR)/%.c
+	$(MKDIR) -p $(dir $@)
+	$(CC) $< $(CFLAGS) -D__FILENAME__=\"$(subst $(SNET_DIR)/,,$<)\" -c -o $@
 
 $(BUILD_DIR)/vendor/%.o: $(STM_DIR)/%.c
 	$(MKDIR) -p $(dir $@)
