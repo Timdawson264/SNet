@@ -1,5 +1,5 @@
 #include "stm32f1xx_hal.h"
-#include "printf.h"
+#include "snet.h"
 
 
 /* TODO: Think about a tidy way to make this work. It's located in the
@@ -27,6 +27,8 @@ main(void)
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 
     printf("Hello, world!\n");
+
+    snet_init();
 
     while (1)
     {
