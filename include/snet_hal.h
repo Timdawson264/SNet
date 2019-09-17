@@ -5,7 +5,7 @@
 
 
 /** Bus symbol rate in bits-per-second. */
-#define SNET_HAL_BAUDRATE (1000000)
+#define SNET_HAL_BAUDRATE (9600)
 
 
 /**

@@ -32,6 +32,9 @@ snet_hal_init(void)
     huart.Init.HwFlowCtl = UART_HWCONTROL_NONE;
     huart.Init.OverSampling = UART_OVERSAMPLING_16;
     HAL_UART_Init(&huart);
+
+    /* Configure our receive interrupt. */
+    __HAL_UART_ENABLE_IT(&huart, UART_IT_RXNE);
 }
 
 
@@ -69,5 +72,16 @@ snet_hal_set_direction(snet_hal_direction_t direction)
         HAL_GPIO_WritePin(GPIOA, RX_ENABLE_PIN, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIOA, TX_ENABLE_PIN, GPIO_PIN_RESET);
         break;
+    }
+}
+
+
+void
+USART1_IRQHandler(void)
+{
+    if (__HAL_UART_GET_FLAG(&huart, UART_FLAG_RXNE))
+    {
+        uint8_t ch = huart.Instance->DR;
+        snet_hal_receive(&ch, 1);
     }
 }
