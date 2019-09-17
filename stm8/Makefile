@@ -7,7 +7,10 @@ LDFLAGS=-L ./lib/
 libstm8_c := libstm8s/src/stm8s_clk.c libstm8s/src/stm8s_gpio.c libstm8s/src/stm8s_i2c.c libstm8s/src/stm8s_uart1.c libstm8s/src/stm8s_exti.c libstm8s/src/stm8s_flash.c libstm8s/src/stm8s_flash.c libstm8s/src/stm8s_tim1.c libstm8s/src/stm8s_tim2.c libstm8s/src/stm8s_tim4.c 
 libstm8_o := $(libstm8_c:.c=.rel)
 
-all: lib/libstm8s.a bin/main.ihx
+SRC_C := src/main.c
+LIBS := lib/libstm8s.a
+
+all: bin/main.ihx
 
 clean:
 	-rm -f *.asm *.rel *.lst *.sym
@@ -21,5 +24,5 @@ lib/libstm8s.a : $(libstm8_o)
 	$(AR) r $@ $^
 
 
-bin/main.ihx : main.c lib/libstm8s.a
+bin/main.ihx : $(SRC_C) $(LIBS)
 	$(CC) $(CFLAGS) --out-fmt-ihx -o $@ $(LDFLAGS) -llibstm8s.a $<

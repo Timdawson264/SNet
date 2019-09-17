@@ -1,3 +1,0 @@
-[submodule "stm8/libstm8s"]
-	path = stm8/libstm8s
-	url = https://github.com/roshbaby/stm8s-sdcc.git
