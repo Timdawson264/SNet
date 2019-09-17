@@ -30,10 +30,25 @@ main(void)
 
     snet_init();
 
+    int count = 0;
+    uint8_t buf[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+
     while (1)
     {
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
         HAL_Delay(200);
+
+        if (count == 0)
+        {
+            snet_hal_set_direction(SNET_HAL_DIR_TX);
+            snet_hal_transmit(buf, sizeof(buf));
+            snet_hal_set_direction(SNET_HAL_DIR_RX);
+            count = 10;
+        }
+        else
+        {
+            count--;
+        }
     }
 }
 
