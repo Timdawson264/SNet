@@ -16,4 +16,8 @@ void
 snet_init(void);
 
 
+void
+snet_update(void);
+
+
 #endif
