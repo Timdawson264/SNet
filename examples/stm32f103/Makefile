@@ -21,10 +21,12 @@ SNET_DIR ?= ../..
 
 SNET_SRCS_C = \
     src/snet.c \
-    src/util/printf.c
+    src/util/printf.c \
+    src/util/ringbuf.c
 
 SNET_INCLUDE = \
-    include
+    include \
+    src/util
 
 INCLUDE += $(addprefix $(SNET_DIR)/, $(SNET_INCLUDE))
 

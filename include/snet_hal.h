@@ -48,6 +48,9 @@ snet_hal_transmit(uint8_t *data, uint16_t length);
 /**
  * Implemented within SNet to allow the HAL layer to pass received data up.
  *
+ * @note this may be called from an interrupt context. Received data wont be
+ * processed until @ref snet_update() is called.
+ *
  * @note it is assumed the data pointer will only be valid for the duration of
  * this function call. I.e. the caller may free the data once this function has
  * returned.

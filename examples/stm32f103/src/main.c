@@ -35,6 +35,8 @@ main(void)
 
     while (1)
     {
+        snet_update();
+
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
         HAL_Delay(200);
 

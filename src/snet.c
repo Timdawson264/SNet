@@ -1,11 +1,13 @@
 #include "snet.h"
 
+#include <string.h>
+
 #define SNET_DEBUG
 #include "snet_internal.h"
 
 
-static uint8_t rxbuf[256];
-static uint16_t buflen;
+static ringbuf_t rx_rb;
+static uint8_t rx_buf[256];
 
 
 void
@@ -13,10 +15,22 @@ snet_init(void)
 {
     DEBUG("init\n");
 
-    buflen = 0;
+    ringbuf_init(&rx_rb, rx_buf, sizeof(rx_buf));
 
     snet_hal_init();
     snet_hal_set_direction(SNET_HAL_DIR_IDLE);
+}
+
+
+void
+snet_update(void)
+{
+    uint8_t ch;
+
+    while (ringbuf_pop(&rx_rb, &ch))
+    {
+        DEBUG("%02x\n", ch);
+    }
 }
 
 
@@ -27,23 +41,6 @@ snet_hal_receive(uint8_t *data, uint16_t length)
 
     for (i = 0; i < length; i++)
     {
-        rxbuf[buflen] = data[i];
-        buflen = (buflen + 1) % sizeof(rxbuf);
+        ringbuf_push(&rx_rb, data[i]);
     }
-
-#ifdef SNET_DEBUG
-    if (buflen >= 16)
-    {
-        DEBUG("Received:\n >  ");
-        for (int i = 0; i < buflen; i++)
-        {
-            if (i % 8 == 0 && i != 0 && i != buflen - 1)
-                printf("\n >  ");
-
-            printf("%02x", rxbuf[i]);
-        }
-        printf("\n");
-        buflen = 0;
-    }
-#endif
 }

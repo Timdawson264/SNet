@@ -2,6 +2,9 @@
 #define SNET_INTERNAL_H__
 
 
+#include "ringbuf.h"
+
+
 #ifdef SNET_DEBUG
 #define DEBUG(...)                                      \
     do {                                                \
