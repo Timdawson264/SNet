@@ -13,7 +13,7 @@ LIBS := lib/libstm8s.a
 all: bin/main.ihx
 
 clean:
-	-rm -f *.asm *.rel *.lst *.sym
+	-rm -f *.asm *.rel *.lst *.sym $(libstm8_o) $(LIBS)
 	-rm -f libstm8s/src/*.asm libstm8s/src/*.rel libstm8s/src/*.lst libstm8s/src/*.sym
 	-rm -rf bin lib
 
