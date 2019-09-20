@@ -15,7 +15,7 @@ BUILD_DIR = build
 
 
 #
-# TODO: We'll tidy this bit up later
+# SNet library sources.
 #
 SNET_DIR ?= ../..
 
@@ -24,9 +24,7 @@ SNET_SRCS_C = \
     src/util/printf.c \
     src/util/ringbuf.c
 
-SNET_INCLUDE = \
-    include \
-    src/util
+SNET_INCLUDE = src src/util
 
 INCLUDE += $(addprefix $(SNET_DIR)/, $(SNET_INCLUDE))
 
