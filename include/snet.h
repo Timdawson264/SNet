@@ -16,8 +16,21 @@ void
 snet_init(void);
 
 
+/**
+ * Gives processing time to SNet. This function must be called periodically.
+ */
 void
 snet_update(void);
+
+
+/**
+ * Transmits data on the bus.
+ *
+ * @param data the data to send.
+ * @param length the number of octets to send.
+ */
+void
+snet_send(uint8_t *data, uint16_t length);
 
 
 #endif

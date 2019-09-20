@@ -65,6 +65,15 @@ snet_hal_receive(uint8_t *data, uint16_t length);
 
 
 /**
+ * Checks the current status of the transmitter.
+ *
+ * @returns @c TRUE if the hardware is busy transmitting.
+ */
+bool
+snet_hal_is_transmitting(void);
+
+
+/**
  * Sets the bus direction based on our current state. @see snet_hal_direction_t.
  *
  * @param direction the direction to configure our bus into.

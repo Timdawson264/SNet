@@ -53,6 +53,13 @@ snet_hal_transmit(uint8_t *data, uint16_t length)
 }
 
 
+bool
+snet_hal_is_transmitting(void)
+{
+    return !(huart.Instance->SR & UART_FLAG_TXE);
+}
+
+
 void
 snet_hal_set_direction(snet_hal_direction_t direction)
 {

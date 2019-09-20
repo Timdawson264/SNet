@@ -9,6 +9,8 @@
 static ringbuf_t rx_rb;
 static uint8_t rx_buf[256];
 
+static bool transmitting;
+
 
 void
 snet_init(void)
@@ -27,10 +29,27 @@ snet_update(void)
 {
     uint8_t ch;
 
+    /* Handle transmit completion. */
+    if (!snet_hal_is_transmitting() && transmitting)
+    {
+        snet_hal_set_direction(SNET_HAL_DIR_RX);
+        transmitting = false;
+    }
+
+    /* Process any received data. */
     while (ringbuf_pop(&rx_rb, &ch))
     {
         DEBUG("%02x\n", ch);
     }
+}
+
+
+void
+snet_send(uint8_t *data, uint16_t length)
+{
+    snet_hal_set_direction(SNET_HAL_DIR_TX);
+    snet_hal_transmit(data, length);
+    transmitting = true;
 }
 
 
