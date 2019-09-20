@@ -1,0 +1,1338 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ANSI-C Compiler
+                                      3 ; Version 3.5.0 #9253 (Apr  3 2018) (Linux)
+                                      4 ; This file was generated Fri Sep 20 09:49:51 2019
+                                      5 ;--------------------------------------------------------
+                                      6 	.module stm8s_tim2
+                                      7 	.optsdcc -mstm8
+                                      8 	
+                                      9 ;--------------------------------------------------------
+                                     10 ; Public variables in this module
+                                     11 ;--------------------------------------------------------
+                                     12 	.globl _TIM2_DeInit
+                                     13 	.globl _TIM2_TimeBaseInit
+                                     14 	.globl _TIM2_OC1Init
+                                     15 	.globl _TIM2_OC2Init
+                                     16 	.globl _TIM2_OC3Init
+                                     17 	.globl _TIM2_ICInit
+                                     18 	.globl _TIM2_PWMIConfig
+                                     19 	.globl _TIM2_Cmd
+                                     20 	.globl _TIM2_ITConfig
+                                     21 	.globl _TIM2_UpdateDisableConfig
+                                     22 	.globl _TIM2_UpdateRequestConfig
+                                     23 	.globl _TIM2_SelectOnePulseMode
+                                     24 	.globl _TIM2_PrescalerConfig
+                                     25 	.globl _TIM2_ForcedOC1Config
+                                     26 	.globl _TIM2_ForcedOC2Config
+                                     27 	.globl _TIM2_ForcedOC3Config
+                                     28 	.globl _TIM2_ARRPreloadConfig
+                                     29 	.globl _TIM2_OC1PreloadConfig
+                                     30 	.globl _TIM2_OC2PreloadConfig
+                                     31 	.globl _TIM2_OC3PreloadConfig
+                                     32 	.globl _TIM2_GenerateEvent
+                                     33 	.globl _TIM2_OC1PolarityConfig
+                                     34 	.globl _TIM2_OC2PolarityConfig
+                                     35 	.globl _TIM2_OC3PolarityConfig
+                                     36 	.globl _TIM2_CCxCmd
+                                     37 	.globl _TIM2_SelectOCxM
+                                     38 	.globl _TIM2_SetCounter
+                                     39 	.globl _TIM2_SetAutoreload
+                                     40 	.globl _TIM2_SetCompare1
+                                     41 	.globl _TIM2_SetCompare2
+                                     42 	.globl _TIM2_SetCompare3
+                                     43 	.globl _TIM2_SetIC1Prescaler
+                                     44 	.globl _TIM2_SetIC2Prescaler
+                                     45 	.globl _TIM2_SetIC3Prescaler
+                                     46 	.globl _TIM2_GetCapture1
+                                     47 	.globl _TIM2_GetCapture2
+                                     48 	.globl _TIM2_GetCapture3
+                                     49 	.globl _TIM2_GetCounter
+                                     50 	.globl _TIM2_GetPrescaler
+                                     51 	.globl _TIM2_GetFlagStatus
+                                     52 	.globl _TIM2_ClearFlag
+                                     53 	.globl _TIM2_GetITStatus
+                                     54 	.globl _TIM2_ClearITPendingBit
+                                     55 ;--------------------------------------------------------
+                                     56 ; ram data
+                                     57 ;--------------------------------------------------------
+                                     58 	.area DATA
+                                     59 ;--------------------------------------------------------
+                                     60 ; ram data
+                                     61 ;--------------------------------------------------------
+                                     62 	.area INITIALIZED
+                                     63 ;--------------------------------------------------------
+                                     64 ; absolute external ram data
+                                     65 ;--------------------------------------------------------
+                                     66 	.area DABS (ABS)
+                                     67 ;--------------------------------------------------------
+                                     68 ; global & static initialisations
+                                     69 ;--------------------------------------------------------
+                                     70 	.area HOME
+                                     71 	.area GSINIT
+                                     72 	.area GSFINAL
+                                     73 	.area GSINIT
+                                     74 ;--------------------------------------------------------
+                                     75 ; Home
+                                     76 ;--------------------------------------------------------
+                                     77 	.area HOME
+                                     78 	.area HOME
+                                     79 ;--------------------------------------------------------
+                                     80 ; code
+                                     81 ;--------------------------------------------------------
+                                     82 	.area CODE
+                                     83 ;	libstm8s/src/stm8s_tim2.c: 52: void TIM2_DeInit(void)
+                                     84 ;	-----------------------------------------
+                                     85 ;	 function TIM2_DeInit
+                                     86 ;	-----------------------------------------
+      000000                         87 _TIM2_DeInit:
+                                     88 ;	libstm8s/src/stm8s_tim2.c: 54: TIM2->CR1 = (uint8_t)TIM2_CR1_RESET_VALUE;
+      000000 35 00 53 00      [ 1]   89 	mov	0x5300+0, #0x00
+                                     90 ;	libstm8s/src/stm8s_tim2.c: 55: TIM2->IER = (uint8_t)TIM2_IER_RESET_VALUE;
+      000004 35 00 53 03      [ 1]   91 	mov	0x5303+0, #0x00
+                                     92 ;	libstm8s/src/stm8s_tim2.c: 56: TIM2->SR2 = (uint8_t)TIM2_SR2_RESET_VALUE;
+      000008 35 00 53 05      [ 1]   93 	mov	0x5305+0, #0x00
+                                     94 ;	libstm8s/src/stm8s_tim2.c: 59: TIM2->CCER1 = (uint8_t)TIM2_CCER1_RESET_VALUE;
+      00000C 35 00 53 0A      [ 1]   95 	mov	0x530a+0, #0x00
+                                     96 ;	libstm8s/src/stm8s_tim2.c: 60: TIM2->CCER2 = (uint8_t)TIM2_CCER2_RESET_VALUE;
+      000010 35 00 53 0B      [ 1]   97 	mov	0x530b+0, #0x00
+                                     98 ;	libstm8s/src/stm8s_tim2.c: 64: TIM2->CCER1 = (uint8_t)TIM2_CCER1_RESET_VALUE;
+      000014 35 00 53 0A      [ 1]   99 	mov	0x530a+0, #0x00
+                                    100 ;	libstm8s/src/stm8s_tim2.c: 65: TIM2->CCER2 = (uint8_t)TIM2_CCER2_RESET_VALUE;
+      000018 35 00 53 0B      [ 1]  101 	mov	0x530b+0, #0x00
+                                    102 ;	libstm8s/src/stm8s_tim2.c: 66: TIM2->CCMR1 = (uint8_t)TIM2_CCMR1_RESET_VALUE;
+      00001C 35 00 53 07      [ 1]  103 	mov	0x5307+0, #0x00
+                                    104 ;	libstm8s/src/stm8s_tim2.c: 67: TIM2->CCMR2 = (uint8_t)TIM2_CCMR2_RESET_VALUE;
+      000020 35 00 53 08      [ 1]  105 	mov	0x5308+0, #0x00
+                                    106 ;	libstm8s/src/stm8s_tim2.c: 68: TIM2->CCMR3 = (uint8_t)TIM2_CCMR3_RESET_VALUE;
+      000024 35 00 53 09      [ 1]  107 	mov	0x5309+0, #0x00
+                                    108 ;	libstm8s/src/stm8s_tim2.c: 69: TIM2->CNTRH = (uint8_t)TIM2_CNTRH_RESET_VALUE;
+      000028 35 00 53 0C      [ 1]  109 	mov	0x530c+0, #0x00
+                                    110 ;	libstm8s/src/stm8s_tim2.c: 70: TIM2->CNTRL = (uint8_t)TIM2_CNTRL_RESET_VALUE;
+      00002C 35 00 53 0D      [ 1]  111 	mov	0x530d+0, #0x00
+                                    112 ;	libstm8s/src/stm8s_tim2.c: 71: TIM2->PSCR = (uint8_t)TIM2_PSCR_RESET_VALUE;
+      000030 35 00 53 0E      [ 1]  113 	mov	0x530e+0, #0x00
+                                    114 ;	libstm8s/src/stm8s_tim2.c: 72: TIM2->ARRH  = (uint8_t)TIM2_ARRH_RESET_VALUE;
+      000034 35 FF 53 0F      [ 1]  115 	mov	0x530f+0, #0xff
+                                    116 ;	libstm8s/src/stm8s_tim2.c: 73: TIM2->ARRL  = (uint8_t)TIM2_ARRL_RESET_VALUE;
+      000038 35 FF 53 10      [ 1]  117 	mov	0x5310+0, #0xff
+                                    118 ;	libstm8s/src/stm8s_tim2.c: 74: TIM2->CCR1H = (uint8_t)TIM2_CCR1H_RESET_VALUE;
+      00003C 35 00 53 11      [ 1]  119 	mov	0x5311+0, #0x00
+                                    120 ;	libstm8s/src/stm8s_tim2.c: 75: TIM2->CCR1L = (uint8_t)TIM2_CCR1L_RESET_VALUE;
+      000040 35 00 53 12      [ 1]  121 	mov	0x5312+0, #0x00
+                                    122 ;	libstm8s/src/stm8s_tim2.c: 76: TIM2->CCR2H = (uint8_t)TIM2_CCR2H_RESET_VALUE;
+      000044 35 00 53 13      [ 1]  123 	mov	0x5313+0, #0x00
+                                    124 ;	libstm8s/src/stm8s_tim2.c: 77: TIM2->CCR2L = (uint8_t)TIM2_CCR2L_RESET_VALUE;
+      000048 35 00 53 14      [ 1]  125 	mov	0x5314+0, #0x00
+                                    126 ;	libstm8s/src/stm8s_tim2.c: 78: TIM2->CCR3H = (uint8_t)TIM2_CCR3H_RESET_VALUE;
+      00004C 35 00 53 15      [ 1]  127 	mov	0x5315+0, #0x00
+                                    128 ;	libstm8s/src/stm8s_tim2.c: 79: TIM2->CCR3L = (uint8_t)TIM2_CCR3L_RESET_VALUE;
+      000050 35 00 53 16      [ 1]  129 	mov	0x5316+0, #0x00
+                                    130 ;	libstm8s/src/stm8s_tim2.c: 80: TIM2->SR1 = (uint8_t)TIM2_SR1_RESET_VALUE;
+      000054 35 00 53 04      [ 1]  131 	mov	0x5304+0, #0x00
+      000058 81               [ 4]  132 	ret
+                                    133 ;	libstm8s/src/stm8s_tim2.c: 89: void TIM2_TimeBaseInit( TIM2_Prescaler_TypeDef TIM2_Prescaler,
+                                    134 ;	-----------------------------------------
+                                    135 ;	 function TIM2_TimeBaseInit
+                                    136 ;	-----------------------------------------
+      000059                        137 _TIM2_TimeBaseInit:
+      000059 89               [ 2]  138 	pushw	x
+                                    139 ;	libstm8s/src/stm8s_tim2.c: 93: TIM2->PSCR = (uint8_t)(TIM2_Prescaler);
+      00005A AE 53 0E         [ 2]  140 	ldw	x, #0x530e
+      00005D 7B 05            [ 1]  141 	ld	a, (0x05, sp)
+      00005F F7               [ 1]  142 	ld	(x), a
+                                    143 ;	libstm8s/src/stm8s_tim2.c: 95: TIM2->ARRH = (uint8_t)(TIM2_Period >> 8);
+      000060 7B 06            [ 1]  144 	ld	a, (0x06, sp)
+      000062 0F 01            [ 1]  145 	clr	(0x01, sp)
+      000064 AE 53 0F         [ 2]  146 	ldw	x, #0x530f
+      000067 F7               [ 1]  147 	ld	(x), a
+                                    148 ;	libstm8s/src/stm8s_tim2.c: 96: TIM2->ARRL = (uint8_t)(TIM2_Period);
+      000068 7B 07            [ 1]  149 	ld	a, (0x07, sp)
+      00006A AE 53 10         [ 2]  150 	ldw	x, #0x5310
+      00006D F7               [ 1]  151 	ld	(x), a
+      00006E 85               [ 2]  152 	popw	x
+      00006F 81               [ 4]  153 	ret
+                                    154 ;	libstm8s/src/stm8s_tim2.c: 108: void TIM2_OC1Init(TIM2_OCMode_TypeDef TIM2_OCMode,
+                                    155 ;	-----------------------------------------
+                                    156 ;	 function TIM2_OC1Init
+                                    157 ;	-----------------------------------------
+      000070                        158 _TIM2_OC1Init:
+      000070 52 04            [ 2]  159 	sub	sp, #4
+                                    160 ;	libstm8s/src/stm8s_tim2.c: 119: TIM2->CCER1 &= (uint8_t)(~( TIM2_CCER1_CC1E | TIM2_CCER1_CC1P));
+      000072 AE 53 0A         [ 2]  161 	ldw	x, #0x530a
+      000075 F6               [ 1]  162 	ld	a, (x)
+      000076 A4 FC            [ 1]  163 	and	a, #0xfc
+      000078 F7               [ 1]  164 	ld	(x), a
+                                    165 ;	libstm8s/src/stm8s_tim2.c: 121: TIM2->CCER1 |= (uint8_t)((uint8_t)(TIM2_OutputState & TIM2_CCER1_CC1E ) |
+      000079 AE 53 0A         [ 2]  166 	ldw	x, #0x530a
+      00007C F6               [ 1]  167 	ld	a, (x)
+      00007D 6B 04            [ 1]  168 	ld	(0x04, sp), a
+      00007F 7B 08            [ 1]  169 	ld	a, (0x08, sp)
+      000081 A4 01            [ 1]  170 	and	a, #0x01
+      000083 6B 03            [ 1]  171 	ld	(0x03, sp), a
+                                    172 ;	libstm8s/src/stm8s_tim2.c: 122: (uint8_t)(TIM2_OCPolarity & TIM2_CCER1_CC1P));
+      000085 7B 0B            [ 1]  173 	ld	a, (0x0b, sp)
+      000087 A4 02            [ 1]  174 	and	a, #0x02
+      000089 1A 03            [ 1]  175 	or	a, (0x03, sp)
+      00008B 1A 04            [ 1]  176 	or	a, (0x04, sp)
+      00008D AE 53 0A         [ 2]  177 	ldw	x, #0x530a
+      000090 F7               [ 1]  178 	ld	(x), a
+                                    179 ;	libstm8s/src/stm8s_tim2.c: 125: TIM2->CCMR1 = (uint8_t)((uint8_t)(TIM2->CCMR1 & (uint8_t)(~TIM2_CCMR_OCM)) |
+      000091 AE 53 07         [ 2]  180 	ldw	x, #0x5307
+      000094 F6               [ 1]  181 	ld	a, (x)
+      000095 A4 8F            [ 1]  182 	and	a, #0x8f
+                                    183 ;	libstm8s/src/stm8s_tim2.c: 126: (uint8_t)TIM2_OCMode);
+      000097 1A 07            [ 1]  184 	or	a, (0x07, sp)
+      000099 AE 53 07         [ 2]  185 	ldw	x, #0x5307
+      00009C F7               [ 1]  186 	ld	(x), a
+                                    187 ;	libstm8s/src/stm8s_tim2.c: 129: TIM2->CCR1H = (uint8_t)(TIM2_Pulse >> 8);
+      00009D 7B 09            [ 1]  188 	ld	a, (0x09, sp)
+      00009F 0F 01            [ 1]  189 	clr	(0x01, sp)
+      0000A1 AE 53 11         [ 2]  190 	ldw	x, #0x5311
+      0000A4 F7               [ 1]  191 	ld	(x), a
+                                    192 ;	libstm8s/src/stm8s_tim2.c: 130: TIM2->CCR1L = (uint8_t)(TIM2_Pulse);
+      0000A5 7B 0A            [ 1]  193 	ld	a, (0x0a, sp)
+      0000A7 AE 53 12         [ 2]  194 	ldw	x, #0x5312
+      0000AA F7               [ 1]  195 	ld	(x), a
+      0000AB 5B 04            [ 2]  196 	addw	sp, #4
+      0000AD 81               [ 4]  197 	ret
+                                    198 ;	libstm8s/src/stm8s_tim2.c: 142: void TIM2_OC2Init(TIM2_OCMode_TypeDef TIM2_OCMode,
+                                    199 ;	-----------------------------------------
+                                    200 ;	 function TIM2_OC2Init
+                                    201 ;	-----------------------------------------
+      0000AE                        202 _TIM2_OC2Init:
+      0000AE 52 04            [ 2]  203 	sub	sp, #4
+                                    204 ;	libstm8s/src/stm8s_tim2.c: 154: TIM2->CCER1 &= (uint8_t)(~( TIM2_CCER1_CC2E |  TIM2_CCER1_CC2P ));
+      0000B0 AE 53 0A         [ 2]  205 	ldw	x, #0x530a
+      0000B3 F6               [ 1]  206 	ld	a, (x)
+      0000B4 A4 CF            [ 1]  207 	and	a, #0xcf
+      0000B6 F7               [ 1]  208 	ld	(x), a
+                                    209 ;	libstm8s/src/stm8s_tim2.c: 156: TIM2->CCER1 |= (uint8_t)((uint8_t)(TIM2_OutputState  & TIM2_CCER1_CC2E ) |
+      0000B7 AE 53 0A         [ 2]  210 	ldw	x, #0x530a
+      0000BA F6               [ 1]  211 	ld	a, (x)
+      0000BB 6B 01            [ 1]  212 	ld	(0x01, sp), a
+      0000BD 7B 08            [ 1]  213 	ld	a, (0x08, sp)
+      0000BF A4 10            [ 1]  214 	and	a, #0x10
+      0000C1 6B 02            [ 1]  215 	ld	(0x02, sp), a
+                                    216 ;	libstm8s/src/stm8s_tim2.c: 157: (uint8_t)(TIM2_OCPolarity & TIM2_CCER1_CC2P));
+      0000C3 7B 0B            [ 1]  217 	ld	a, (0x0b, sp)
+      0000C5 A4 20            [ 1]  218 	and	a, #0x20
+      0000C7 1A 02            [ 1]  219 	or	a, (0x02, sp)
+      0000C9 1A 01            [ 1]  220 	or	a, (0x01, sp)
+      0000CB AE 53 0A         [ 2]  221 	ldw	x, #0x530a
+      0000CE F7               [ 1]  222 	ld	(x), a
+                                    223 ;	libstm8s/src/stm8s_tim2.c: 161: TIM2->CCMR2 = (uint8_t)((uint8_t)(TIM2->CCMR2 & (uint8_t)(~TIM2_CCMR_OCM)) |
+      0000CF AE 53 08         [ 2]  224 	ldw	x, #0x5308
+      0000D2 F6               [ 1]  225 	ld	a, (x)
+      0000D3 A4 8F            [ 1]  226 	and	a, #0x8f
+                                    227 ;	libstm8s/src/stm8s_tim2.c: 162: (uint8_t)TIM2_OCMode);
+      0000D5 1A 07            [ 1]  228 	or	a, (0x07, sp)
+      0000D7 AE 53 08         [ 2]  229 	ldw	x, #0x5308
+      0000DA F7               [ 1]  230 	ld	(x), a
+                                    231 ;	libstm8s/src/stm8s_tim2.c: 166: TIM2->CCR2H = (uint8_t)(TIM2_Pulse >> 8);
+      0000DB 7B 09            [ 1]  232 	ld	a, (0x09, sp)
+      0000DD 0F 03            [ 1]  233 	clr	(0x03, sp)
+      0000DF AE 53 13         [ 2]  234 	ldw	x, #0x5313
+      0000E2 F7               [ 1]  235 	ld	(x), a
+                                    236 ;	libstm8s/src/stm8s_tim2.c: 167: TIM2->CCR2L = (uint8_t)(TIM2_Pulse);
+      0000E3 7B 0A            [ 1]  237 	ld	a, (0x0a, sp)
+      0000E5 AE 53 14         [ 2]  238 	ldw	x, #0x5314
+      0000E8 F7               [ 1]  239 	ld	(x), a
+      0000E9 5B 04            [ 2]  240 	addw	sp, #4
+      0000EB 81               [ 4]  241 	ret
+                                    242 ;	libstm8s/src/stm8s_tim2.c: 179: void TIM2_OC3Init(TIM2_OCMode_TypeDef TIM2_OCMode,
+                                    243 ;	-----------------------------------------
+                                    244 ;	 function TIM2_OC3Init
+                                    245 ;	-----------------------------------------
+      0000EC                        246 _TIM2_OC3Init:
+      0000EC 52 04            [ 2]  247 	sub	sp, #4
+                                    248 ;	libstm8s/src/stm8s_tim2.c: 189: TIM2->CCER2 &= (uint8_t)(~( TIM2_CCER2_CC3E  | TIM2_CCER2_CC3P));
+      0000EE AE 53 0B         [ 2]  249 	ldw	x, #0x530b
+      0000F1 F6               [ 1]  250 	ld	a, (x)
+      0000F2 A4 FC            [ 1]  251 	and	a, #0xfc
+      0000F4 F7               [ 1]  252 	ld	(x), a
+                                    253 ;	libstm8s/src/stm8s_tim2.c: 191: TIM2->CCER2 |= (uint8_t)((uint8_t)(TIM2_OutputState & TIM2_CCER2_CC3E) |
+      0000F5 AE 53 0B         [ 2]  254 	ldw	x, #0x530b
+      0000F8 F6               [ 1]  255 	ld	a, (x)
+      0000F9 6B 04            [ 1]  256 	ld	(0x04, sp), a
+      0000FB 7B 08            [ 1]  257 	ld	a, (0x08, sp)
+      0000FD A4 01            [ 1]  258 	and	a, #0x01
+      0000FF 6B 03            [ 1]  259 	ld	(0x03, sp), a
+                                    260 ;	libstm8s/src/stm8s_tim2.c: 192: (uint8_t)(TIM2_OCPolarity & TIM2_CCER2_CC3P));
+      000101 7B 0B            [ 1]  261 	ld	a, (0x0b, sp)
+      000103 A4 02            [ 1]  262 	and	a, #0x02
+      000105 1A 03            [ 1]  263 	or	a, (0x03, sp)
+      000107 1A 04            [ 1]  264 	or	a, (0x04, sp)
+      000109 AE 53 0B         [ 2]  265 	ldw	x, #0x530b
+      00010C F7               [ 1]  266 	ld	(x), a
+                                    267 ;	libstm8s/src/stm8s_tim2.c: 195: TIM2->CCMR3 = (uint8_t)((uint8_t)(TIM2->CCMR3 & (uint8_t)(~TIM2_CCMR_OCM)) |
+      00010D AE 53 09         [ 2]  268 	ldw	x, #0x5309
+      000110 F6               [ 1]  269 	ld	a, (x)
+      000111 A4 8F            [ 1]  270 	and	a, #0x8f
+                                    271 ;	libstm8s/src/stm8s_tim2.c: 196: (uint8_t)TIM2_OCMode);
+      000113 1A 07            [ 1]  272 	or	a, (0x07, sp)
+      000115 AE 53 09         [ 2]  273 	ldw	x, #0x5309
+      000118 F7               [ 1]  274 	ld	(x), a
+                                    275 ;	libstm8s/src/stm8s_tim2.c: 199: TIM2->CCR3H = (uint8_t)(TIM2_Pulse >> 8);
+      000119 7B 09            [ 1]  276 	ld	a, (0x09, sp)
+      00011B 0F 01            [ 1]  277 	clr	(0x01, sp)
+      00011D AE 53 15         [ 2]  278 	ldw	x, #0x5315
+      000120 F7               [ 1]  279 	ld	(x), a
+                                    280 ;	libstm8s/src/stm8s_tim2.c: 200: TIM2->CCR3L = (uint8_t)(TIM2_Pulse);
+      000121 7B 0A            [ 1]  281 	ld	a, (0x0a, sp)
+      000123 AE 53 16         [ 2]  282 	ldw	x, #0x5316
+      000126 F7               [ 1]  283 	ld	(x), a
+      000127 5B 04            [ 2]  284 	addw	sp, #4
+      000129 81               [ 4]  285 	ret
+                                    286 ;	libstm8s/src/stm8s_tim2.c: 212: void TIM2_ICInit(TIM2_Channel_TypeDef TIM2_Channel,
+                                    287 ;	-----------------------------------------
+                                    288 ;	 function TIM2_ICInit
+                                    289 ;	-----------------------------------------
+      00012A                        290 _TIM2_ICInit:
+                                    291 ;	libstm8s/src/stm8s_tim2.c: 225: if (TIM2_Channel == TIM2_CHANNEL_1)
+      00012A 0D 03            [ 1]  292 	tnz	(0x03, sp)
+      00012C 26 17            [ 1]  293 	jrne	00105$
+                                    294 ;	libstm8s/src/stm8s_tim2.c: 228: TI1_Config((uint8_t)TIM2_ICPolarity,
+      00012E 7B 07            [ 1]  295 	ld	a, (0x07, sp)
+      000130 88               [ 1]  296 	push	a
+      000131 7B 06            [ 1]  297 	ld	a, (0x06, sp)
+      000133 88               [ 1]  298 	push	a
+      000134 7B 06            [ 1]  299 	ld	a, (0x06, sp)
+      000136 88               [ 1]  300 	push	a
+      000137 CDr04rF9         [ 4]  301 	call	_TI1_Config
+      00013A 5B 03            [ 2]  302 	addw	sp, #3
+                                    303 ;	libstm8s/src/stm8s_tim2.c: 233: TIM2_SetIC1Prescaler(TIM2_ICPrescaler);
+      00013C 7B 06            [ 1]  304 	ld	a, (0x06, sp)
+      00013E 88               [ 1]  305 	push	a
+      00013F CDr04r01         [ 4]  306 	call	_TIM2_SetIC1Prescaler
+      000142 84               [ 1]  307 	pop	a
+      000143 20 32            [ 2]  308 	jra	00107$
+      000145                        309 00105$:
+                                    310 ;	libstm8s/src/stm8s_tim2.c: 235: else if (TIM2_Channel == TIM2_CHANNEL_2)
+      000145 7B 03            [ 1]  311 	ld	a, (0x03, sp)
+      000147 A1 01            [ 1]  312 	cp	a, #0x01
+      000149 26 17            [ 1]  313 	jrne	00102$
+                                    314 ;	libstm8s/src/stm8s_tim2.c: 238: TI2_Config((uint8_t)TIM2_ICPolarity,
+      00014B 7B 07            [ 1]  315 	ld	a, (0x07, sp)
+      00014D 88               [ 1]  316 	push	a
+      00014E 7B 06            [ 1]  317 	ld	a, (0x06, sp)
+      000150 88               [ 1]  318 	push	a
+      000151 7B 06            [ 1]  319 	ld	a, (0x06, sp)
+      000153 88               [ 1]  320 	push	a
+      000154 CDr05r2D         [ 4]  321 	call	_TI2_Config
+      000157 5B 03            [ 2]  322 	addw	sp, #3
+                                    323 ;	libstm8s/src/stm8s_tim2.c: 243: TIM2_SetIC2Prescaler(TIM2_ICPrescaler);
+      000159 7B 06            [ 1]  324 	ld	a, (0x06, sp)
+      00015B 88               [ 1]  325 	push	a
+      00015C CDr04r0E         [ 4]  326 	call	_TIM2_SetIC2Prescaler
+      00015F 84               [ 1]  327 	pop	a
+      000160 20 15            [ 2]  328 	jra	00107$
+      000162                        329 00102$:
+                                    330 ;	libstm8s/src/stm8s_tim2.c: 248: TI3_Config((uint8_t)TIM2_ICPolarity,
+      000162 7B 07            [ 1]  331 	ld	a, (0x07, sp)
+      000164 88               [ 1]  332 	push	a
+      000165 7B 06            [ 1]  333 	ld	a, (0x06, sp)
+      000167 88               [ 1]  334 	push	a
+      000168 7B 06            [ 1]  335 	ld	a, (0x06, sp)
+      00016A 88               [ 1]  336 	push	a
+      00016B CDr05r67         [ 4]  337 	call	_TI3_Config
+      00016E 5B 03            [ 2]  338 	addw	sp, #3
+                                    339 ;	libstm8s/src/stm8s_tim2.c: 253: TIM2_SetIC3Prescaler(TIM2_ICPrescaler);
+      000170 7B 06            [ 1]  340 	ld	a, (0x06, sp)
+      000172 88               [ 1]  341 	push	a
+      000173 CDr04r1B         [ 4]  342 	call	_TIM2_SetIC3Prescaler
+      000176 84               [ 1]  343 	pop	a
+      000177                        344 00107$:
+      000177 81               [ 4]  345 	ret
+                                    346 ;	libstm8s/src/stm8s_tim2.c: 266: void TIM2_PWMIConfig(TIM2_Channel_TypeDef TIM2_Channel,
+                                    347 ;	-----------------------------------------
+                                    348 ;	 function TIM2_PWMIConfig
+                                    349 ;	-----------------------------------------
+      000178                        350 _TIM2_PWMIConfig:
+      000178 89               [ 2]  351 	pushw	x
+                                    352 ;	libstm8s/src/stm8s_tim2.c: 282: if (TIM2_ICPolarity != TIM2_ICPOLARITY_FALLING)
+      000179 7B 06            [ 1]  353 	ld	a, (0x06, sp)
+      00017B A1 44            [ 1]  354 	cp	a, #0x44
+      00017D 27 06            [ 1]  355 	jreq	00102$
+                                    356 ;	libstm8s/src/stm8s_tim2.c: 284: icpolarity = (uint8_t)TIM2_ICPOLARITY_FALLING;
+      00017F A6 44            [ 1]  357 	ld	a, #0x44
+      000181 6B 02            [ 1]  358 	ld	(0x02, sp), a
+      000183 20 02            [ 2]  359 	jra	00103$
+      000185                        360 00102$:
+                                    361 ;	libstm8s/src/stm8s_tim2.c: 288: icpolarity = (uint8_t)TIM2_ICPOLARITY_RISING;
+      000185 0F 02            [ 1]  362 	clr	(0x02, sp)
+      000187                        363 00103$:
+                                    364 ;	libstm8s/src/stm8s_tim2.c: 292: if (TIM2_ICSelection == TIM2_ICSELECTION_DIRECTTI)
+      000187 7B 07            [ 1]  365 	ld	a, (0x07, sp)
+      000189 A1 01            [ 1]  366 	cp	a, #0x01
+      00018B 26 06            [ 1]  367 	jrne	00105$
+                                    368 ;	libstm8s/src/stm8s_tim2.c: 294: icselection = (uint8_t)TIM2_ICSELECTION_INDIRECTTI;
+      00018D A6 02            [ 1]  369 	ld	a, #0x02
+      00018F 6B 01            [ 1]  370 	ld	(0x01, sp), a
+      000191 20 04            [ 2]  371 	jra	00106$
+      000193                        372 00105$:
+                                    373 ;	libstm8s/src/stm8s_tim2.c: 298: icselection = (uint8_t)TIM2_ICSELECTION_DIRECTTI;
+      000193 A6 01            [ 1]  374 	ld	a, #0x01
+      000195 6B 01            [ 1]  375 	ld	(0x01, sp), a
+      000197                        376 00106$:
+                                    377 ;	libstm8s/src/stm8s_tim2.c: 301: if (TIM2_Channel == TIM2_CHANNEL_1)
+      000197 0D 05            [ 1]  378 	tnz	(0x05, sp)
+      000199 26 2C            [ 1]  379 	jrne	00108$
+                                    380 ;	libstm8s/src/stm8s_tim2.c: 304: TI1_Config((uint8_t)TIM2_ICPolarity, (uint8_t)TIM2_ICSelection,
+      00019B 7B 09            [ 1]  381 	ld	a, (0x09, sp)
+      00019D 88               [ 1]  382 	push	a
+      00019E 7B 08            [ 1]  383 	ld	a, (0x08, sp)
+      0001A0 88               [ 1]  384 	push	a
+      0001A1 7B 08            [ 1]  385 	ld	a, (0x08, sp)
+      0001A3 88               [ 1]  386 	push	a
+      0001A4 CDr04rF9         [ 4]  387 	call	_TI1_Config
+      0001A7 5B 03            [ 2]  388 	addw	sp, #3
+                                    389 ;	libstm8s/src/stm8s_tim2.c: 308: TIM2_SetIC1Prescaler(TIM2_ICPrescaler);
+      0001A9 7B 08            [ 1]  390 	ld	a, (0x08, sp)
+      0001AB 88               [ 1]  391 	push	a
+      0001AC CDr04r01         [ 4]  392 	call	_TIM2_SetIC1Prescaler
+      0001AF 84               [ 1]  393 	pop	a
+                                    394 ;	libstm8s/src/stm8s_tim2.c: 311: TI2_Config(icpolarity, icselection, TIM2_ICFilter);
+      0001B0 7B 09            [ 1]  395 	ld	a, (0x09, sp)
+      0001B2 88               [ 1]  396 	push	a
+      0001B3 7B 02            [ 1]  397 	ld	a, (0x02, sp)
+      0001B5 88               [ 1]  398 	push	a
+      0001B6 7B 04            [ 1]  399 	ld	a, (0x04, sp)
+      0001B8 88               [ 1]  400 	push	a
+      0001B9 CDr05r2D         [ 4]  401 	call	_TI2_Config
+      0001BC 5B 03            [ 2]  402 	addw	sp, #3
+                                    403 ;	libstm8s/src/stm8s_tim2.c: 314: TIM2_SetIC2Prescaler(TIM2_ICPrescaler);
+      0001BE 7B 08            [ 1]  404 	ld	a, (0x08, sp)
+      0001C0 88               [ 1]  405 	push	a
+      0001C1 CDr04r0E         [ 4]  406 	call	_TIM2_SetIC2Prescaler
+      0001C4 84               [ 1]  407 	pop	a
+      0001C5 20 2A            [ 2]  408 	jra	00110$
+      0001C7                        409 00108$:
+                                    410 ;	libstm8s/src/stm8s_tim2.c: 319: TI2_Config((uint8_t)TIM2_ICPolarity, (uint8_t)TIM2_ICSelection,
+      0001C7 7B 09            [ 1]  411 	ld	a, (0x09, sp)
+      0001C9 88               [ 1]  412 	push	a
+      0001CA 7B 08            [ 1]  413 	ld	a, (0x08, sp)
+      0001CC 88               [ 1]  414 	push	a
+      0001CD 7B 08            [ 1]  415 	ld	a, (0x08, sp)
+      0001CF 88               [ 1]  416 	push	a
+      0001D0 CDr05r2D         [ 4]  417 	call	_TI2_Config
+      0001D3 5B 03            [ 2]  418 	addw	sp, #3
+                                    419 ;	libstm8s/src/stm8s_tim2.c: 323: TIM2_SetIC2Prescaler(TIM2_ICPrescaler);
+      0001D5 7B 08            [ 1]  420 	ld	a, (0x08, sp)
+      0001D7 88               [ 1]  421 	push	a
+      0001D8 CDr04r0E         [ 4]  422 	call	_TIM2_SetIC2Prescaler
+      0001DB 84               [ 1]  423 	pop	a
+                                    424 ;	libstm8s/src/stm8s_tim2.c: 326: TI1_Config((uint8_t)icpolarity, icselection, (uint8_t)TIM2_ICFilter);
+      0001DC 7B 09            [ 1]  425 	ld	a, (0x09, sp)
+      0001DE 88               [ 1]  426 	push	a
+      0001DF 7B 02            [ 1]  427 	ld	a, (0x02, sp)
+      0001E1 88               [ 1]  428 	push	a
+      0001E2 7B 04            [ 1]  429 	ld	a, (0x04, sp)
+      0001E4 88               [ 1]  430 	push	a
+      0001E5 CDr04rF9         [ 4]  431 	call	_TI1_Config
+      0001E8 5B 03            [ 2]  432 	addw	sp, #3
+                                    433 ;	libstm8s/src/stm8s_tim2.c: 329: TIM2_SetIC1Prescaler(TIM2_ICPrescaler);
+      0001EA 7B 08            [ 1]  434 	ld	a, (0x08, sp)
+      0001EC 88               [ 1]  435 	push	a
+      0001ED CDr04r01         [ 4]  436 	call	_TIM2_SetIC1Prescaler
+      0001F0 84               [ 1]  437 	pop	a
+      0001F1                        438 00110$:
+      0001F1 85               [ 2]  439 	popw	x
+      0001F2 81               [ 4]  440 	ret
+                                    441 ;	libstm8s/src/stm8s_tim2.c: 339: void TIM2_Cmd(FunctionalState NewState)
+                                    442 ;	-----------------------------------------
+                                    443 ;	 function TIM2_Cmd
+                                    444 ;	-----------------------------------------
+      0001F3                        445 _TIM2_Cmd:
+                                    446 ;	libstm8s/src/stm8s_tim2.c: 345: if (NewState != DISABLE)
+      0001F3 0D 03            [ 1]  447 	tnz	(0x03, sp)
+      0001F5 27 06            [ 1]  448 	jreq	00102$
+                                    449 ;	libstm8s/src/stm8s_tim2.c: 347: TIM2->CR1 |= (uint8_t)TIM2_CR1_CEN;
+      0001F7 72 10 53 00      [ 1]  450 	bset	0x5300, #0
+      0001FB 20 04            [ 2]  451 	jra	00104$
+      0001FD                        452 00102$:
+                                    453 ;	libstm8s/src/stm8s_tim2.c: 351: TIM2->CR1 &= (uint8_t)(~TIM2_CR1_CEN);
+      0001FD 72 11 53 00      [ 1]  454 	bres	0x5300, #0
+      000201                        455 00104$:
+      000201 81               [ 4]  456 	ret
+                                    457 ;	libstm8s/src/stm8s_tim2.c: 368: void TIM2_ITConfig(TIM2_IT_TypeDef TIM2_IT, FunctionalState NewState)
+                                    458 ;	-----------------------------------------
+                                    459 ;	 function TIM2_ITConfig
+                                    460 ;	-----------------------------------------
+      000202                        461 _TIM2_ITConfig:
+      000202 88               [ 1]  462 	push	a
+                                    463 ;	libstm8s/src/stm8s_tim2.c: 374: if (NewState != DISABLE)
+      000203 0D 05            [ 1]  464 	tnz	(0x05, sp)
+      000205 27 0C            [ 1]  465 	jreq	00102$
+                                    466 ;	libstm8s/src/stm8s_tim2.c: 377: TIM2->IER |= (uint8_t)TIM2_IT;
+      000207 AE 53 03         [ 2]  467 	ldw	x, #0x5303
+      00020A F6               [ 1]  468 	ld	a, (x)
+      00020B 1A 04            [ 1]  469 	or	a, (0x04, sp)
+      00020D AE 53 03         [ 2]  470 	ldw	x, #0x5303
+      000210 F7               [ 1]  471 	ld	(x), a
+      000211 20 0F            [ 2]  472 	jra	00104$
+      000213                        473 00102$:
+                                    474 ;	libstm8s/src/stm8s_tim2.c: 382: TIM2->IER &= (uint8_t)(~TIM2_IT);
+      000213 AE 53 03         [ 2]  475 	ldw	x, #0x5303
+      000216 F6               [ 1]  476 	ld	a, (x)
+      000217 6B 01            [ 1]  477 	ld	(0x01, sp), a
+      000219 7B 04            [ 1]  478 	ld	a, (0x04, sp)
+      00021B 43               [ 1]  479 	cpl	a
+      00021C 14 01            [ 1]  480 	and	a, (0x01, sp)
+      00021E AE 53 03         [ 2]  481 	ldw	x, #0x5303
+      000221 F7               [ 1]  482 	ld	(x), a
+      000222                        483 00104$:
+      000222 84               [ 1]  484 	pop	a
+      000223 81               [ 4]  485 	ret
+                                    486 ;	libstm8s/src/stm8s_tim2.c: 392: void TIM2_UpdateDisableConfig(FunctionalState NewState)
+                                    487 ;	-----------------------------------------
+                                    488 ;	 function TIM2_UpdateDisableConfig
+                                    489 ;	-----------------------------------------
+      000224                        490 _TIM2_UpdateDisableConfig:
+                                    491 ;	libstm8s/src/stm8s_tim2.c: 398: if (NewState != DISABLE)
+      000224 0D 03            [ 1]  492 	tnz	(0x03, sp)
+      000226 27 09            [ 1]  493 	jreq	00102$
+                                    494 ;	libstm8s/src/stm8s_tim2.c: 400: TIM2->CR1 |= (uint8_t)TIM2_CR1_UDIS;
+      000228 AE 53 00         [ 2]  495 	ldw	x, #0x5300
+      00022B F6               [ 1]  496 	ld	a, (x)
+      00022C AA 02            [ 1]  497 	or	a, #0x02
+      00022E F7               [ 1]  498 	ld	(x), a
+      00022F 20 07            [ 2]  499 	jra	00104$
+      000231                        500 00102$:
+                                    501 ;	libstm8s/src/stm8s_tim2.c: 404: TIM2->CR1 &= (uint8_t)(~TIM2_CR1_UDIS);
+      000231 AE 53 00         [ 2]  502 	ldw	x, #0x5300
+      000234 F6               [ 1]  503 	ld	a, (x)
+      000235 A4 FD            [ 1]  504 	and	a, #0xfd
+      000237 F7               [ 1]  505 	ld	(x), a
+      000238                        506 00104$:
+      000238 81               [ 4]  507 	ret
+                                    508 ;	libstm8s/src/stm8s_tim2.c: 416: void TIM2_UpdateRequestConfig(TIM2_UpdateSource_TypeDef TIM2_UpdateSource)
+                                    509 ;	-----------------------------------------
+                                    510 ;	 function TIM2_UpdateRequestConfig
+                                    511 ;	-----------------------------------------
+      000239                        512 _TIM2_UpdateRequestConfig:
+                                    513 ;	libstm8s/src/stm8s_tim2.c: 422: if (TIM2_UpdateSource != TIM2_UPDATESOURCE_GLOBAL)
+      000239 0D 03            [ 1]  514 	tnz	(0x03, sp)
+      00023B 27 09            [ 1]  515 	jreq	00102$
+                                    516 ;	libstm8s/src/stm8s_tim2.c: 424: TIM2->CR1 |= (uint8_t)TIM2_CR1_URS;
+      00023D AE 53 00         [ 2]  517 	ldw	x, #0x5300
+      000240 F6               [ 1]  518 	ld	a, (x)
+      000241 AA 04            [ 1]  519 	or	a, #0x04
+      000243 F7               [ 1]  520 	ld	(x), a
+      000244 20 07            [ 2]  521 	jra	00104$
+      000246                        522 00102$:
+                                    523 ;	libstm8s/src/stm8s_tim2.c: 428: TIM2->CR1 &= (uint8_t)(~TIM2_CR1_URS);
+      000246 AE 53 00         [ 2]  524 	ldw	x, #0x5300
+      000249 F6               [ 1]  525 	ld	a, (x)
+      00024A A4 FB            [ 1]  526 	and	a, #0xfb
+      00024C F7               [ 1]  527 	ld	(x), a
+      00024D                        528 00104$:
+      00024D 81               [ 4]  529 	ret
+                                    530 ;	libstm8s/src/stm8s_tim2.c: 440: void TIM2_SelectOnePulseMode(TIM2_OPMode_TypeDef TIM2_OPMode)
+                                    531 ;	-----------------------------------------
+                                    532 ;	 function TIM2_SelectOnePulseMode
+                                    533 ;	-----------------------------------------
+      00024E                        534 _TIM2_SelectOnePulseMode:
+                                    535 ;	libstm8s/src/stm8s_tim2.c: 446: if (TIM2_OPMode != TIM2_OPMODE_REPETITIVE)
+      00024E 0D 03            [ 1]  536 	tnz	(0x03, sp)
+      000250 27 09            [ 1]  537 	jreq	00102$
+                                    538 ;	libstm8s/src/stm8s_tim2.c: 448: TIM2->CR1 |= (uint8_t)TIM2_CR1_OPM;
+      000252 AE 53 00         [ 2]  539 	ldw	x, #0x5300
+      000255 F6               [ 1]  540 	ld	a, (x)
+      000256 AA 08            [ 1]  541 	or	a, #0x08
+      000258 F7               [ 1]  542 	ld	(x), a
+      000259 20 07            [ 2]  543 	jra	00104$
+      00025B                        544 00102$:
+                                    545 ;	libstm8s/src/stm8s_tim2.c: 452: TIM2->CR1 &= (uint8_t)(~TIM2_CR1_OPM);
+      00025B AE 53 00         [ 2]  546 	ldw	x, #0x5300
+      00025E F6               [ 1]  547 	ld	a, (x)
+      00025F A4 F7            [ 1]  548 	and	a, #0xf7
+      000261 F7               [ 1]  549 	ld	(x), a
+      000262                        550 00104$:
+      000262 81               [ 4]  551 	ret
+                                    552 ;	libstm8s/src/stm8s_tim2.c: 484: void TIM2_PrescalerConfig(TIM2_Prescaler_TypeDef Prescaler,
+                                    553 ;	-----------------------------------------
+                                    554 ;	 function TIM2_PrescalerConfig
+                                    555 ;	-----------------------------------------
+      000263                        556 _TIM2_PrescalerConfig:
+                                    557 ;	libstm8s/src/stm8s_tim2.c: 492: TIM2->PSCR = (uint8_t)Prescaler;
+      000263 AE 53 0E         [ 2]  558 	ldw	x, #0x530e
+      000266 7B 03            [ 1]  559 	ld	a, (0x03, sp)
+      000268 F7               [ 1]  560 	ld	(x), a
+                                    561 ;	libstm8s/src/stm8s_tim2.c: 495: TIM2->EGR = (uint8_t)TIM2_PSCReloadMode;
+      000269 AE 53 06         [ 2]  562 	ldw	x, #0x5306
+      00026C 7B 04            [ 1]  563 	ld	a, (0x04, sp)
+      00026E F7               [ 1]  564 	ld	(x), a
+      00026F 81               [ 4]  565 	ret
+                                    566 ;	libstm8s/src/stm8s_tim2.c: 507: void TIM2_ForcedOC1Config(TIM2_ForcedAction_TypeDef TIM2_ForcedAction)
+                                    567 ;	-----------------------------------------
+                                    568 ;	 function TIM2_ForcedOC1Config
+                                    569 ;	-----------------------------------------
+      000270                        570 _TIM2_ForcedOC1Config:
+                                    571 ;	libstm8s/src/stm8s_tim2.c: 513: TIM2->CCMR1  =  (uint8_t)((uint8_t)(TIM2->CCMR1 & (uint8_t)(~TIM2_CCMR_OCM))
+      000270 AE 53 07         [ 2]  572 	ldw	x, #0x5307
+      000273 F6               [ 1]  573 	ld	a, (x)
+      000274 A4 8F            [ 1]  574 	and	a, #0x8f
+                                    575 ;	libstm8s/src/stm8s_tim2.c: 514: | (uint8_t)TIM2_ForcedAction);
+      000276 1A 03            [ 1]  576 	or	a, (0x03, sp)
+      000278 AE 53 07         [ 2]  577 	ldw	x, #0x5307
+      00027B F7               [ 1]  578 	ld	(x), a
+      00027C 81               [ 4]  579 	ret
+                                    580 ;	libstm8s/src/stm8s_tim2.c: 526: void TIM2_ForcedOC2Config(TIM2_ForcedAction_TypeDef TIM2_ForcedAction)
+                                    581 ;	-----------------------------------------
+                                    582 ;	 function TIM2_ForcedOC2Config
+                                    583 ;	-----------------------------------------
+      00027D                        584 _TIM2_ForcedOC2Config:
+                                    585 ;	libstm8s/src/stm8s_tim2.c: 532: TIM2->CCMR2 = (uint8_t)((uint8_t)(TIM2->CCMR2 & (uint8_t)(~TIM2_CCMR_OCM))
+      00027D AE 53 08         [ 2]  586 	ldw	x, #0x5308
+      000280 F6               [ 1]  587 	ld	a, (x)
+      000281 A4 8F            [ 1]  588 	and	a, #0x8f
+                                    589 ;	libstm8s/src/stm8s_tim2.c: 533: | (uint8_t)TIM2_ForcedAction);
+      000283 1A 03            [ 1]  590 	or	a, (0x03, sp)
+      000285 AE 53 08         [ 2]  591 	ldw	x, #0x5308
+      000288 F7               [ 1]  592 	ld	(x), a
+      000289 81               [ 4]  593 	ret
+                                    594 ;	libstm8s/src/stm8s_tim2.c: 545: void TIM2_ForcedOC3Config(TIM2_ForcedAction_TypeDef TIM2_ForcedAction)
+                                    595 ;	-----------------------------------------
+                                    596 ;	 function TIM2_ForcedOC3Config
+                                    597 ;	-----------------------------------------
+      00028A                        598 _TIM2_ForcedOC3Config:
+                                    599 ;	libstm8s/src/stm8s_tim2.c: 551: TIM2->CCMR3  =  (uint8_t)((uint8_t)(TIM2->CCMR3 & (uint8_t)(~TIM2_CCMR_OCM))
+      00028A AE 53 09         [ 2]  600 	ldw	x, #0x5309
+      00028D F6               [ 1]  601 	ld	a, (x)
+      00028E A4 8F            [ 1]  602 	and	a, #0x8f
+                                    603 ;	libstm8s/src/stm8s_tim2.c: 552: | (uint8_t)TIM2_ForcedAction);
+      000290 1A 03            [ 1]  604 	or	a, (0x03, sp)
+      000292 AE 53 09         [ 2]  605 	ldw	x, #0x5309
+      000295 F7               [ 1]  606 	ld	(x), a
+      000296 81               [ 4]  607 	ret
+                                    608 ;	libstm8s/src/stm8s_tim2.c: 561: void TIM2_ARRPreloadConfig(FunctionalState NewState)
+                                    609 ;	-----------------------------------------
+                                    610 ;	 function TIM2_ARRPreloadConfig
+                                    611 ;	-----------------------------------------
+      000297                        612 _TIM2_ARRPreloadConfig:
+                                    613 ;	libstm8s/src/stm8s_tim2.c: 567: if (NewState != DISABLE)
+      000297 0D 03            [ 1]  614 	tnz	(0x03, sp)
+      000299 27 06            [ 1]  615 	jreq	00102$
+                                    616 ;	libstm8s/src/stm8s_tim2.c: 569: TIM2->CR1 |= (uint8_t)TIM2_CR1_ARPE;
+      00029B 72 1E 53 00      [ 1]  617 	bset	0x5300, #7
+      00029F 20 04            [ 2]  618 	jra	00104$
+      0002A1                        619 00102$:
+                                    620 ;	libstm8s/src/stm8s_tim2.c: 573: TIM2->CR1 &= (uint8_t)(~TIM2_CR1_ARPE);
+      0002A1 72 1F 53 00      [ 1]  621 	bres	0x5300, #7
+      0002A5                        622 00104$:
+      0002A5 81               [ 4]  623 	ret
+                                    624 ;	libstm8s/src/stm8s_tim2.c: 583: void TIM2_OC1PreloadConfig(FunctionalState NewState)
+                                    625 ;	-----------------------------------------
+                                    626 ;	 function TIM2_OC1PreloadConfig
+                                    627 ;	-----------------------------------------
+      0002A6                        628 _TIM2_OC1PreloadConfig:
+                                    629 ;	libstm8s/src/stm8s_tim2.c: 589: if (NewState != DISABLE)
+      0002A6 0D 03            [ 1]  630 	tnz	(0x03, sp)
+      0002A8 27 09            [ 1]  631 	jreq	00102$
+                                    632 ;	libstm8s/src/stm8s_tim2.c: 591: TIM2->CCMR1 |= (uint8_t)TIM2_CCMR_OCxPE;
+      0002AA AE 53 07         [ 2]  633 	ldw	x, #0x5307
+      0002AD F6               [ 1]  634 	ld	a, (x)
+      0002AE AA 08            [ 1]  635 	or	a, #0x08
+      0002B0 F7               [ 1]  636 	ld	(x), a
+      0002B1 20 07            [ 2]  637 	jra	00104$
+      0002B3                        638 00102$:
+                                    639 ;	libstm8s/src/stm8s_tim2.c: 595: TIM2->CCMR1 &= (uint8_t)(~TIM2_CCMR_OCxPE);
+      0002B3 AE 53 07         [ 2]  640 	ldw	x, #0x5307
+      0002B6 F6               [ 1]  641 	ld	a, (x)
+      0002B7 A4 F7            [ 1]  642 	and	a, #0xf7
+      0002B9 F7               [ 1]  643 	ld	(x), a
+      0002BA                        644 00104$:
+      0002BA 81               [ 4]  645 	ret
+                                    646 ;	libstm8s/src/stm8s_tim2.c: 605: void TIM2_OC2PreloadConfig(FunctionalState NewState)
+                                    647 ;	-----------------------------------------
+                                    648 ;	 function TIM2_OC2PreloadConfig
+                                    649 ;	-----------------------------------------
+      0002BB                        650 _TIM2_OC2PreloadConfig:
+                                    651 ;	libstm8s/src/stm8s_tim2.c: 611: if (NewState != DISABLE)
+      0002BB 0D 03            [ 1]  652 	tnz	(0x03, sp)
+      0002BD 27 09            [ 1]  653 	jreq	00102$
+                                    654 ;	libstm8s/src/stm8s_tim2.c: 613: TIM2->CCMR2 |= (uint8_t)TIM2_CCMR_OCxPE;
+      0002BF AE 53 08         [ 2]  655 	ldw	x, #0x5308
+      0002C2 F6               [ 1]  656 	ld	a, (x)
+      0002C3 AA 08            [ 1]  657 	or	a, #0x08
+      0002C5 F7               [ 1]  658 	ld	(x), a
+      0002C6 20 07            [ 2]  659 	jra	00104$
+      0002C8                        660 00102$:
+                                    661 ;	libstm8s/src/stm8s_tim2.c: 617: TIM2->CCMR2 &= (uint8_t)(~TIM2_CCMR_OCxPE);
+      0002C8 AE 53 08         [ 2]  662 	ldw	x, #0x5308
+      0002CB F6               [ 1]  663 	ld	a, (x)
+      0002CC A4 F7            [ 1]  664 	and	a, #0xf7
+      0002CE F7               [ 1]  665 	ld	(x), a
+      0002CF                        666 00104$:
+      0002CF 81               [ 4]  667 	ret
+                                    668 ;	libstm8s/src/stm8s_tim2.c: 627: void TIM2_OC3PreloadConfig(FunctionalState NewState)
+                                    669 ;	-----------------------------------------
+                                    670 ;	 function TIM2_OC3PreloadConfig
+                                    671 ;	-----------------------------------------
+      0002D0                        672 _TIM2_OC3PreloadConfig:
+                                    673 ;	libstm8s/src/stm8s_tim2.c: 633: if (NewState != DISABLE)
+      0002D0 0D 03            [ 1]  674 	tnz	(0x03, sp)
+      0002D2 27 09            [ 1]  675 	jreq	00102$
+                                    676 ;	libstm8s/src/stm8s_tim2.c: 635: TIM2->CCMR3 |= (uint8_t)TIM2_CCMR_OCxPE;
+      0002D4 AE 53 09         [ 2]  677 	ldw	x, #0x5309
+      0002D7 F6               [ 1]  678 	ld	a, (x)
+      0002D8 AA 08            [ 1]  679 	or	a, #0x08
+      0002DA F7               [ 1]  680 	ld	(x), a
+      0002DB 20 07            [ 2]  681 	jra	00104$
+      0002DD                        682 00102$:
+                                    683 ;	libstm8s/src/stm8s_tim2.c: 639: TIM2->CCMR3 &= (uint8_t)(~TIM2_CCMR_OCxPE);
+      0002DD AE 53 09         [ 2]  684 	ldw	x, #0x5309
+      0002E0 F6               [ 1]  685 	ld	a, (x)
+      0002E1 A4 F7            [ 1]  686 	and	a, #0xf7
+      0002E3 F7               [ 1]  687 	ld	(x), a
+      0002E4                        688 00104$:
+      0002E4 81               [ 4]  689 	ret
+                                    690 ;	libstm8s/src/stm8s_tim2.c: 653: void TIM2_GenerateEvent(TIM2_EventSource_TypeDef TIM2_EventSource)
+                                    691 ;	-----------------------------------------
+                                    692 ;	 function TIM2_GenerateEvent
+                                    693 ;	-----------------------------------------
+      0002E5                        694 _TIM2_GenerateEvent:
+                                    695 ;	libstm8s/src/stm8s_tim2.c: 659: TIM2->EGR = (uint8_t)TIM2_EventSource;
+      0002E5 AE 53 06         [ 2]  696 	ldw	x, #0x5306
+      0002E8 7B 03            [ 1]  697 	ld	a, (0x03, sp)
+      0002EA F7               [ 1]  698 	ld	(x), a
+      0002EB 81               [ 4]  699 	ret
+                                    700 ;	libstm8s/src/stm8s_tim2.c: 670: void TIM2_OC1PolarityConfig(TIM2_OCPolarity_TypeDef TIM2_OCPolarity)
+                                    701 ;	-----------------------------------------
+                                    702 ;	 function TIM2_OC1PolarityConfig
+                                    703 ;	-----------------------------------------
+      0002EC                        704 _TIM2_OC1PolarityConfig:
+                                    705 ;	libstm8s/src/stm8s_tim2.c: 676: if (TIM2_OCPolarity != TIM2_OCPOLARITY_HIGH)
+      0002EC 0D 03            [ 1]  706 	tnz	(0x03, sp)
+      0002EE 27 09            [ 1]  707 	jreq	00102$
+                                    708 ;	libstm8s/src/stm8s_tim2.c: 678: TIM2->CCER1 |= (uint8_t)TIM2_CCER1_CC1P;
+      0002F0 AE 53 0A         [ 2]  709 	ldw	x, #0x530a
+      0002F3 F6               [ 1]  710 	ld	a, (x)
+      0002F4 AA 02            [ 1]  711 	or	a, #0x02
+      0002F6 F7               [ 1]  712 	ld	(x), a
+      0002F7 20 07            [ 2]  713 	jra	00104$
+      0002F9                        714 00102$:
+                                    715 ;	libstm8s/src/stm8s_tim2.c: 682: TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC1P);
+      0002F9 AE 53 0A         [ 2]  716 	ldw	x, #0x530a
+      0002FC F6               [ 1]  717 	ld	a, (x)
+      0002FD A4 FD            [ 1]  718 	and	a, #0xfd
+      0002FF F7               [ 1]  719 	ld	(x), a
+      000300                        720 00104$:
+      000300 81               [ 4]  721 	ret
+                                    722 ;	libstm8s/src/stm8s_tim2.c: 694: void TIM2_OC2PolarityConfig(TIM2_OCPolarity_TypeDef TIM2_OCPolarity)
+                                    723 ;	-----------------------------------------
+                                    724 ;	 function TIM2_OC2PolarityConfig
+                                    725 ;	-----------------------------------------
+      000301                        726 _TIM2_OC2PolarityConfig:
+                                    727 ;	libstm8s/src/stm8s_tim2.c: 700: if (TIM2_OCPolarity != TIM2_OCPOLARITY_HIGH)
+      000301 0D 03            [ 1]  728 	tnz	(0x03, sp)
+      000303 27 09            [ 1]  729 	jreq	00102$
+                                    730 ;	libstm8s/src/stm8s_tim2.c: 702: TIM2->CCER1 |= TIM2_CCER1_CC2P;
+      000305 AE 53 0A         [ 2]  731 	ldw	x, #0x530a
+      000308 F6               [ 1]  732 	ld	a, (x)
+      000309 AA 20            [ 1]  733 	or	a, #0x20
+      00030B F7               [ 1]  734 	ld	(x), a
+      00030C 20 07            [ 2]  735 	jra	00104$
+      00030E                        736 00102$:
+                                    737 ;	libstm8s/src/stm8s_tim2.c: 706: TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC2P);
+      00030E AE 53 0A         [ 2]  738 	ldw	x, #0x530a
+      000311 F6               [ 1]  739 	ld	a, (x)
+      000312 A4 DF            [ 1]  740 	and	a, #0xdf
+      000314 F7               [ 1]  741 	ld	(x), a
+      000315                        742 00104$:
+      000315 81               [ 4]  743 	ret
+                                    744 ;	libstm8s/src/stm8s_tim2.c: 718: void TIM2_OC3PolarityConfig(TIM2_OCPolarity_TypeDef TIM2_OCPolarity)
+                                    745 ;	-----------------------------------------
+                                    746 ;	 function TIM2_OC3PolarityConfig
+                                    747 ;	-----------------------------------------
+      000316                        748 _TIM2_OC3PolarityConfig:
+                                    749 ;	libstm8s/src/stm8s_tim2.c: 724: if (TIM2_OCPolarity != TIM2_OCPOLARITY_HIGH)
+      000316 0D 03            [ 1]  750 	tnz	(0x03, sp)
+      000318 27 09            [ 1]  751 	jreq	00102$
+                                    752 ;	libstm8s/src/stm8s_tim2.c: 726: TIM2->CCER2 |= (uint8_t)TIM2_CCER2_CC3P;
+      00031A AE 53 0B         [ 2]  753 	ldw	x, #0x530b
+      00031D F6               [ 1]  754 	ld	a, (x)
+      00031E AA 02            [ 1]  755 	or	a, #0x02
+      000320 F7               [ 1]  756 	ld	(x), a
+      000321 20 07            [ 2]  757 	jra	00104$
+      000323                        758 00102$:
+                                    759 ;	libstm8s/src/stm8s_tim2.c: 730: TIM2->CCER2 &= (uint8_t)(~TIM2_CCER2_CC3P);
+      000323 AE 53 0B         [ 2]  760 	ldw	x, #0x530b
+      000326 F6               [ 1]  761 	ld	a, (x)
+      000327 A4 FD            [ 1]  762 	and	a, #0xfd
+      000329 F7               [ 1]  763 	ld	(x), a
+      00032A                        764 00104$:
+      00032A 81               [ 4]  765 	ret
+                                    766 ;	libstm8s/src/stm8s_tim2.c: 745: void TIM2_CCxCmd(TIM2_Channel_TypeDef TIM2_Channel, FunctionalState NewState)
+                                    767 ;	-----------------------------------------
+                                    768 ;	 function TIM2_CCxCmd
+                                    769 ;	-----------------------------------------
+      00032B                        770 _TIM2_CCxCmd:
+                                    771 ;	libstm8s/src/stm8s_tim2.c: 751: if (TIM2_Channel == TIM2_CHANNEL_1)
+      00032B 0D 03            [ 1]  772 	tnz	(0x03, sp)
+      00032D 26 10            [ 1]  773 	jrne	00114$
+                                    774 ;	libstm8s/src/stm8s_tim2.c: 754: if (NewState != DISABLE)
+      00032F 0D 04            [ 1]  775 	tnz	(0x04, sp)
+      000331 27 06            [ 1]  776 	jreq	00102$
+                                    777 ;	libstm8s/src/stm8s_tim2.c: 756: TIM2->CCER1 |= (uint8_t)TIM2_CCER1_CC1E;
+      000333 72 10 53 0A      [ 1]  778 	bset	0x530a, #0
+      000337 20 30            [ 2]  779 	jra	00116$
+      000339                        780 00102$:
+                                    781 ;	libstm8s/src/stm8s_tim2.c: 760: TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC1E);
+      000339 72 11 53 0A      [ 1]  782 	bres	0x530a, #0
+      00033D 20 2A            [ 2]  783 	jra	00116$
+      00033F                        784 00114$:
+                                    785 ;	libstm8s/src/stm8s_tim2.c: 764: else if (TIM2_Channel == TIM2_CHANNEL_2)
+      00033F 7B 03            [ 1]  786 	ld	a, (0x03, sp)
+      000341 A1 01            [ 1]  787 	cp	a, #0x01
+      000343 26 16            [ 1]  788 	jrne	00111$
+                                    789 ;	libstm8s/src/stm8s_tim2.c: 767: if (NewState != DISABLE)
+      000345 0D 04            [ 1]  790 	tnz	(0x04, sp)
+      000347 27 09            [ 1]  791 	jreq	00105$
+                                    792 ;	libstm8s/src/stm8s_tim2.c: 769: TIM2->CCER1 |= (uint8_t)TIM2_CCER1_CC2E;
+      000349 AE 53 0A         [ 2]  793 	ldw	x, #0x530a
+      00034C F6               [ 1]  794 	ld	a, (x)
+      00034D AA 10            [ 1]  795 	or	a, #0x10
+      00034F F7               [ 1]  796 	ld	(x), a
+      000350 20 17            [ 2]  797 	jra	00116$
+      000352                        798 00105$:
+                                    799 ;	libstm8s/src/stm8s_tim2.c: 773: TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC2E);
+      000352 AE 53 0A         [ 2]  800 	ldw	x, #0x530a
+      000355 F6               [ 1]  801 	ld	a, (x)
+      000356 A4 EF            [ 1]  802 	and	a, #0xef
+      000358 F7               [ 1]  803 	ld	(x), a
+      000359 20 0E            [ 2]  804 	jra	00116$
+      00035B                        805 00111$:
+                                    806 ;	libstm8s/src/stm8s_tim2.c: 779: if (NewState != DISABLE)
+      00035B 0D 04            [ 1]  807 	tnz	(0x04, sp)
+      00035D 27 06            [ 1]  808 	jreq	00108$
+                                    809 ;	libstm8s/src/stm8s_tim2.c: 781: TIM2->CCER2 |= (uint8_t)TIM2_CCER2_CC3E;
+      00035F 72 10 53 0B      [ 1]  810 	bset	0x530b, #0
+      000363 20 04            [ 2]  811 	jra	00116$
+      000365                        812 00108$:
+                                    813 ;	libstm8s/src/stm8s_tim2.c: 785: TIM2->CCER2 &= (uint8_t)(~TIM2_CCER2_CC3E);
+      000365 72 11 53 0B      [ 1]  814 	bres	0x530b, #0
+      000369                        815 00116$:
+      000369 81               [ 4]  816 	ret
+                                    817 ;	libstm8s/src/stm8s_tim2.c: 810: void TIM2_SelectOCxM(TIM2_Channel_TypeDef TIM2_Channel, TIM2_OCMode_TypeDef TIM2_OCMode)
+                                    818 ;	-----------------------------------------
+                                    819 ;	 function TIM2_SelectOCxM
+                                    820 ;	-----------------------------------------
+      00036A                        821 _TIM2_SelectOCxM:
+                                    822 ;	libstm8s/src/stm8s_tim2.c: 816: if (TIM2_Channel == TIM2_CHANNEL_1)
+      00036A 0D 03            [ 1]  823 	tnz	(0x03, sp)
+      00036C 26 12            [ 1]  824 	jrne	00105$
+                                    825 ;	libstm8s/src/stm8s_tim2.c: 819: TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC1E);
+      00036E 72 11 53 0A      [ 1]  826 	bres	0x530a, #0
+                                    827 ;	libstm8s/src/stm8s_tim2.c: 822: TIM2->CCMR1 = (uint8_t)((uint8_t)(TIM2->CCMR1 & (uint8_t)(~TIM2_CCMR_OCM))
+      000372 AE 53 07         [ 2]  828 	ldw	x, #0x5307
+      000375 F6               [ 1]  829 	ld	a, (x)
+      000376 A4 8F            [ 1]  830 	and	a, #0x8f
+                                    831 ;	libstm8s/src/stm8s_tim2.c: 823: | (uint8_t)TIM2_OCMode);
+      000378 1A 04            [ 1]  832 	or	a, (0x04, sp)
+      00037A AE 53 07         [ 2]  833 	ldw	x, #0x5307
+      00037D F7               [ 1]  834 	ld	(x), a
+      00037E 20 2B            [ 2]  835 	jra	00107$
+      000380                        836 00105$:
+                                    837 ;	libstm8s/src/stm8s_tim2.c: 825: else if (TIM2_Channel == TIM2_CHANNEL_2)
+      000380 7B 03            [ 1]  838 	ld	a, (0x03, sp)
+      000382 A1 01            [ 1]  839 	cp	a, #0x01
+      000384 26 15            [ 1]  840 	jrne	00102$
+                                    841 ;	libstm8s/src/stm8s_tim2.c: 828: TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC2E);
+      000386 AE 53 0A         [ 2]  842 	ldw	x, #0x530a
+      000389 F6               [ 1]  843 	ld	a, (x)
+      00038A A4 EF            [ 1]  844 	and	a, #0xef
+      00038C F7               [ 1]  845 	ld	(x), a
+                                    846 ;	libstm8s/src/stm8s_tim2.c: 831: TIM2->CCMR2 = (uint8_t)((uint8_t)(TIM2->CCMR2 & (uint8_t)(~TIM2_CCMR_OCM))
+      00038D AE 53 08         [ 2]  847 	ldw	x, #0x5308
+      000390 F6               [ 1]  848 	ld	a, (x)
+      000391 A4 8F            [ 1]  849 	and	a, #0x8f
+                                    850 ;	libstm8s/src/stm8s_tim2.c: 832: | (uint8_t)TIM2_OCMode);
+      000393 1A 04            [ 1]  851 	or	a, (0x04, sp)
+      000395 AE 53 08         [ 2]  852 	ldw	x, #0x5308
+      000398 F7               [ 1]  853 	ld	(x), a
+      000399 20 10            [ 2]  854 	jra	00107$
+      00039B                        855 00102$:
+                                    856 ;	libstm8s/src/stm8s_tim2.c: 837: TIM2->CCER2 &= (uint8_t)(~TIM2_CCER2_CC3E);
+      00039B 72 11 53 0B      [ 1]  857 	bres	0x530b, #0
+                                    858 ;	libstm8s/src/stm8s_tim2.c: 840: TIM2->CCMR3 = (uint8_t)((uint8_t)(TIM2->CCMR3 & (uint8_t)(~TIM2_CCMR_OCM))
+      00039F AE 53 09         [ 2]  859 	ldw	x, #0x5309
+      0003A2 F6               [ 1]  860 	ld	a, (x)
+      0003A3 A4 8F            [ 1]  861 	and	a, #0x8f
+                                    862 ;	libstm8s/src/stm8s_tim2.c: 841: | (uint8_t)TIM2_OCMode);
+      0003A5 1A 04            [ 1]  863 	or	a, (0x04, sp)
+      0003A7 AE 53 09         [ 2]  864 	ldw	x, #0x5309
+      0003AA F7               [ 1]  865 	ld	(x), a
+      0003AB                        866 00107$:
+      0003AB 81               [ 4]  867 	ret
+                                    868 ;	libstm8s/src/stm8s_tim2.c: 851: void TIM2_SetCounter(uint16_t Counter)
+                                    869 ;	-----------------------------------------
+                                    870 ;	 function TIM2_SetCounter
+                                    871 ;	-----------------------------------------
+      0003AC                        872 _TIM2_SetCounter:
+      0003AC 89               [ 2]  873 	pushw	x
+                                    874 ;	libstm8s/src/stm8s_tim2.c: 854: TIM2->CNTRH = (uint8_t)(Counter >> 8);
+      0003AD 7B 05            [ 1]  875 	ld	a, (0x05, sp)
+      0003AF 0F 01            [ 1]  876 	clr	(0x01, sp)
+      0003B1 AE 53 0C         [ 2]  877 	ldw	x, #0x530c
+      0003B4 F7               [ 1]  878 	ld	(x), a
+                                    879 ;	libstm8s/src/stm8s_tim2.c: 855: TIM2->CNTRL = (uint8_t)(Counter);
+      0003B5 7B 06            [ 1]  880 	ld	a, (0x06, sp)
+      0003B7 AE 53 0D         [ 2]  881 	ldw	x, #0x530d
+      0003BA F7               [ 1]  882 	ld	(x), a
+      0003BB 85               [ 2]  883 	popw	x
+      0003BC 81               [ 4]  884 	ret
+                                    885 ;	libstm8s/src/stm8s_tim2.c: 864: void TIM2_SetAutoreload(uint16_t Autoreload)
+                                    886 ;	-----------------------------------------
+                                    887 ;	 function TIM2_SetAutoreload
+                                    888 ;	-----------------------------------------
+      0003BD                        889 _TIM2_SetAutoreload:
+      0003BD 89               [ 2]  890 	pushw	x
+                                    891 ;	libstm8s/src/stm8s_tim2.c: 867: TIM2->ARRH = (uint8_t)(Autoreload >> 8);
+      0003BE 7B 05            [ 1]  892 	ld	a, (0x05, sp)
+      0003C0 0F 01            [ 1]  893 	clr	(0x01, sp)
+      0003C2 AE 53 0F         [ 2]  894 	ldw	x, #0x530f
+      0003C5 F7               [ 1]  895 	ld	(x), a
+                                    896 ;	libstm8s/src/stm8s_tim2.c: 868: TIM2->ARRL = (uint8_t)(Autoreload);
+      0003C6 7B 06            [ 1]  897 	ld	a, (0x06, sp)
+      0003C8 AE 53 10         [ 2]  898 	ldw	x, #0x5310
+      0003CB F7               [ 1]  899 	ld	(x), a
+      0003CC 85               [ 2]  900 	popw	x
+      0003CD 81               [ 4]  901 	ret
+                                    902 ;	libstm8s/src/stm8s_tim2.c: 877: void TIM2_SetCompare1(uint16_t Compare1)
+                                    903 ;	-----------------------------------------
+                                    904 ;	 function TIM2_SetCompare1
+                                    905 ;	-----------------------------------------
+      0003CE                        906 _TIM2_SetCompare1:
+      0003CE 89               [ 2]  907 	pushw	x
+                                    908 ;	libstm8s/src/stm8s_tim2.c: 880: TIM2->CCR1H = (uint8_t)(Compare1 >> 8);
+      0003CF 7B 05            [ 1]  909 	ld	a, (0x05, sp)
+      0003D1 0F 01            [ 1]  910 	clr	(0x01, sp)
+      0003D3 AE 53 11         [ 2]  911 	ldw	x, #0x5311
+      0003D6 F7               [ 1]  912 	ld	(x), a
+                                    913 ;	libstm8s/src/stm8s_tim2.c: 881: TIM2->CCR1L = (uint8_t)(Compare1);
+      0003D7 7B 06            [ 1]  914 	ld	a, (0x06, sp)
+      0003D9 AE 53 12         [ 2]  915 	ldw	x, #0x5312
+      0003DC F7               [ 1]  916 	ld	(x), a
+      0003DD 85               [ 2]  917 	popw	x
+      0003DE 81               [ 4]  918 	ret
+                                    919 ;	libstm8s/src/stm8s_tim2.c: 890: void TIM2_SetCompare2(uint16_t Compare2)
+                                    920 ;	-----------------------------------------
+                                    921 ;	 function TIM2_SetCompare2
+                                    922 ;	-----------------------------------------
+      0003DF                        923 _TIM2_SetCompare2:
+      0003DF 89               [ 2]  924 	pushw	x
+                                    925 ;	libstm8s/src/stm8s_tim2.c: 893: TIM2->CCR2H = (uint8_t)(Compare2 >> 8);
+      0003E0 7B 05            [ 1]  926 	ld	a, (0x05, sp)
+      0003E2 0F 01            [ 1]  927 	clr	(0x01, sp)
+      0003E4 AE 53 13         [ 2]  928 	ldw	x, #0x5313
+      0003E7 F7               [ 1]  929 	ld	(x), a
+                                    930 ;	libstm8s/src/stm8s_tim2.c: 894: TIM2->CCR2L = (uint8_t)(Compare2);
+      0003E8 7B 06            [ 1]  931 	ld	a, (0x06, sp)
+      0003EA AE 53 14         [ 2]  932 	ldw	x, #0x5314
+      0003ED F7               [ 1]  933 	ld	(x), a
+      0003EE 85               [ 2]  934 	popw	x
+      0003EF 81               [ 4]  935 	ret
+                                    936 ;	libstm8s/src/stm8s_tim2.c: 903: void TIM2_SetCompare3(uint16_t Compare3)
+                                    937 ;	-----------------------------------------
+                                    938 ;	 function TIM2_SetCompare3
+                                    939 ;	-----------------------------------------
+      0003F0                        940 _TIM2_SetCompare3:
+      0003F0 89               [ 2]  941 	pushw	x
+                                    942 ;	libstm8s/src/stm8s_tim2.c: 906: TIM2->CCR3H = (uint8_t)(Compare3 >> 8);
+      0003F1 7B 05            [ 1]  943 	ld	a, (0x05, sp)
+      0003F3 0F 01            [ 1]  944 	clr	(0x01, sp)
+      0003F5 AE 53 15         [ 2]  945 	ldw	x, #0x5315
+      0003F8 F7               [ 1]  946 	ld	(x), a
+                                    947 ;	libstm8s/src/stm8s_tim2.c: 907: TIM2->CCR3L = (uint8_t)(Compare3);
+      0003F9 7B 06            [ 1]  948 	ld	a, (0x06, sp)
+      0003FB AE 53 16         [ 2]  949 	ldw	x, #0x5316
+      0003FE F7               [ 1]  950 	ld	(x), a
+      0003FF 85               [ 2]  951 	popw	x
+      000400 81               [ 4]  952 	ret
+                                    953 ;	libstm8s/src/stm8s_tim2.c: 920: void TIM2_SetIC1Prescaler(TIM2_ICPSC_TypeDef TIM2_IC1Prescaler)
+                                    954 ;	-----------------------------------------
+                                    955 ;	 function TIM2_SetIC1Prescaler
+                                    956 ;	-----------------------------------------
+      000401                        957 _TIM2_SetIC1Prescaler:
+                                    958 ;	libstm8s/src/stm8s_tim2.c: 926: TIM2->CCMR1 = (uint8_t)((uint8_t)(TIM2->CCMR1 & (uint8_t)(~TIM2_CCMR_ICxPSC))
+      000401 AE 53 07         [ 2]  959 	ldw	x, #0x5307
+      000404 F6               [ 1]  960 	ld	a, (x)
+      000405 A4 F3            [ 1]  961 	and	a, #0xf3
+                                    962 ;	libstm8s/src/stm8s_tim2.c: 927: | (uint8_t)TIM2_IC1Prescaler);
+      000407 1A 03            [ 1]  963 	or	a, (0x03, sp)
+      000409 AE 53 07         [ 2]  964 	ldw	x, #0x5307
+      00040C F7               [ 1]  965 	ld	(x), a
+      00040D 81               [ 4]  966 	ret
+                                    967 ;	libstm8s/src/stm8s_tim2.c: 940: void TIM2_SetIC2Prescaler(TIM2_ICPSC_TypeDef TIM2_IC2Prescaler)
+                                    968 ;	-----------------------------------------
+                                    969 ;	 function TIM2_SetIC2Prescaler
+                                    970 ;	-----------------------------------------
+      00040E                        971 _TIM2_SetIC2Prescaler:
+                                    972 ;	libstm8s/src/stm8s_tim2.c: 946: TIM2->CCMR2 = (uint8_t)((uint8_t)(TIM2->CCMR2 & (uint8_t)(~TIM2_CCMR_ICxPSC))
+      00040E AE 53 08         [ 2]  973 	ldw	x, #0x5308
+      000411 F6               [ 1]  974 	ld	a, (x)
+      000412 A4 F3            [ 1]  975 	and	a, #0xf3
+                                    976 ;	libstm8s/src/stm8s_tim2.c: 947: | (uint8_t)TIM2_IC2Prescaler);
+      000414 1A 03            [ 1]  977 	or	a, (0x03, sp)
+      000416 AE 53 08         [ 2]  978 	ldw	x, #0x5308
+      000419 F7               [ 1]  979 	ld	(x), a
+      00041A 81               [ 4]  980 	ret
+                                    981 ;	libstm8s/src/stm8s_tim2.c: 960: void TIM2_SetIC3Prescaler(TIM2_ICPSC_TypeDef TIM2_IC3Prescaler)
+                                    982 ;	-----------------------------------------
+                                    983 ;	 function TIM2_SetIC3Prescaler
+                                    984 ;	-----------------------------------------
+      00041B                        985 _TIM2_SetIC3Prescaler:
+                                    986 ;	libstm8s/src/stm8s_tim2.c: 966: TIM2->CCMR3 = (uint8_t)((uint8_t)(TIM2->CCMR3 & (uint8_t)(~TIM2_CCMR_ICxPSC))
+      00041B AE 53 09         [ 2]  987 	ldw	x, #0x5309
+      00041E F6               [ 1]  988 	ld	a, (x)
+      00041F A4 F3            [ 1]  989 	and	a, #0xf3
+                                    990 ;	libstm8s/src/stm8s_tim2.c: 967: | (uint8_t)TIM2_IC3Prescaler);
+      000421 1A 03            [ 1]  991 	or	a, (0x03, sp)
+      000423 AE 53 09         [ 2]  992 	ldw	x, #0x5309
+      000426 F7               [ 1]  993 	ld	(x), a
+      000427 81               [ 4]  994 	ret
+                                    995 ;	libstm8s/src/stm8s_tim2.c: 975: uint16_t TIM2_GetCapture1(void)
+                                    996 ;	-----------------------------------------
+                                    997 ;	 function TIM2_GetCapture1
+                                    998 ;	-----------------------------------------
+      000428                        999 _TIM2_GetCapture1:
+      000428 89               [ 2] 1000 	pushw	x
+                                   1001 ;	libstm8s/src/stm8s_tim2.c: 981: tmpccr1h = TIM2->CCR1H;
+      000429 AE 53 11         [ 2] 1002 	ldw	x, #0x5311
+      00042C F6               [ 1] 1003 	ld	a, (x)
+      00042D 90 95            [ 1] 1004 	ld	yh, a
+                                   1005 ;	libstm8s/src/stm8s_tim2.c: 982: tmpccr1l = TIM2->CCR1L;
+      00042F AE 53 12         [ 2] 1006 	ldw	x, #0x5312
+      000432 F6               [ 1] 1007 	ld	a, (x)
+                                   1008 ;	libstm8s/src/stm8s_tim2.c: 984: tmpccr1 = (uint16_t)(tmpccr1l);
+      000433 5F               [ 1] 1009 	clrw	x
+      000434 97               [ 1] 1010 	ld	xl, a
+      000435 1F 01            [ 2] 1011 	ldw	(0x01, sp), x
+                                   1012 ;	libstm8s/src/stm8s_tim2.c: 985: tmpccr1 |= (uint16_t)((uint16_t)tmpccr1h << 8);
+      000437 4F               [ 1] 1013 	clr	a
+      000438 4F               [ 1] 1014 	clr	a
+      000439 1A 02            [ 1] 1015 	or	a, (0x02, sp)
+      00043B 97               [ 1] 1016 	ld	xl, a
+      00043C 90 9E            [ 1] 1017 	ld	a, yh
+      00043E 1A 01            [ 1] 1018 	or	a, (0x01, sp)
+      000440 95               [ 1] 1019 	ld	xh, a
+                                   1020 ;	libstm8s/src/stm8s_tim2.c: 987: return (uint16_t)tmpccr1;
+      000441 5B 02            [ 2] 1021 	addw	sp, #2
+      000443 81               [ 4] 1022 	ret
+                                   1023 ;	libstm8s/src/stm8s_tim2.c: 995: uint16_t TIM2_GetCapture2(void)
+                                   1024 ;	-----------------------------------------
+                                   1025 ;	 function TIM2_GetCapture2
+                                   1026 ;	-----------------------------------------
+      000444                       1027 _TIM2_GetCapture2:
+      000444 89               [ 2] 1028 	pushw	x
+                                   1029 ;	libstm8s/src/stm8s_tim2.c: 1001: tmpccr2h = TIM2->CCR2H;
+      000445 AE 53 13         [ 2] 1030 	ldw	x, #0x5313
+      000448 F6               [ 1] 1031 	ld	a, (x)
+      000449 90 95            [ 1] 1032 	ld	yh, a
+                                   1033 ;	libstm8s/src/stm8s_tim2.c: 1002: tmpccr2l = TIM2->CCR2L;
+      00044B AE 53 14         [ 2] 1034 	ldw	x, #0x5314
+      00044E F6               [ 1] 1035 	ld	a, (x)
+                                   1036 ;	libstm8s/src/stm8s_tim2.c: 1004: tmpccr2 = (uint16_t)(tmpccr2l);
+      00044F 5F               [ 1] 1037 	clrw	x
+      000450 97               [ 1] 1038 	ld	xl, a
+      000451 1F 01            [ 2] 1039 	ldw	(0x01, sp), x
+                                   1040 ;	libstm8s/src/stm8s_tim2.c: 1005: tmpccr2 |= (uint16_t)((uint16_t)tmpccr2h << 8);
+      000453 4F               [ 1] 1041 	clr	a
+      000454 4F               [ 1] 1042 	clr	a
+      000455 1A 02            [ 1] 1043 	or	a, (0x02, sp)
+      000457 97               [ 1] 1044 	ld	xl, a
+      000458 90 9E            [ 1] 1045 	ld	a, yh
+      00045A 1A 01            [ 1] 1046 	or	a, (0x01, sp)
+      00045C 95               [ 1] 1047 	ld	xh, a
+                                   1048 ;	libstm8s/src/stm8s_tim2.c: 1007: return (uint16_t)tmpccr2;
+      00045D 5B 02            [ 2] 1049 	addw	sp, #2
+      00045F 81               [ 4] 1050 	ret
+                                   1051 ;	libstm8s/src/stm8s_tim2.c: 1015: uint16_t TIM2_GetCapture3(void)
+                                   1052 ;	-----------------------------------------
+                                   1053 ;	 function TIM2_GetCapture3
+                                   1054 ;	-----------------------------------------
+      000460                       1055 _TIM2_GetCapture3:
+      000460 89               [ 2] 1056 	pushw	x
+                                   1057 ;	libstm8s/src/stm8s_tim2.c: 1021: tmpccr3h = TIM2->CCR3H;
+      000461 AE 53 15         [ 2] 1058 	ldw	x, #0x5315
+      000464 F6               [ 1] 1059 	ld	a, (x)
+      000465 90 95            [ 1] 1060 	ld	yh, a
+                                   1061 ;	libstm8s/src/stm8s_tim2.c: 1022: tmpccr3l = TIM2->CCR3L;
+      000467 AE 53 16         [ 2] 1062 	ldw	x, #0x5316
+      00046A F6               [ 1] 1063 	ld	a, (x)
+                                   1064 ;	libstm8s/src/stm8s_tim2.c: 1024: tmpccr3 = (uint16_t)(tmpccr3l);
+      00046B 5F               [ 1] 1065 	clrw	x
+      00046C 97               [ 1] 1066 	ld	xl, a
+      00046D 1F 01            [ 2] 1067 	ldw	(0x01, sp), x
+                                   1068 ;	libstm8s/src/stm8s_tim2.c: 1025: tmpccr3 |= (uint16_t)((uint16_t)tmpccr3h << 8);
+      00046F 4F               [ 1] 1069 	clr	a
+      000470 4F               [ 1] 1070 	clr	a
+      000471 1A 02            [ 1] 1071 	or	a, (0x02, sp)
+      000473 97               [ 1] 1072 	ld	xl, a
+      000474 90 9E            [ 1] 1073 	ld	a, yh
+      000476 1A 01            [ 1] 1074 	or	a, (0x01, sp)
+      000478 95               [ 1] 1075 	ld	xh, a
+                                   1076 ;	libstm8s/src/stm8s_tim2.c: 1027: return (uint16_t)tmpccr3;
+      000479 5B 02            [ 2] 1077 	addw	sp, #2
+      00047B 81               [ 4] 1078 	ret
+                                   1079 ;	libstm8s/src/stm8s_tim2.c: 1035: uint16_t TIM2_GetCounter(void)
+                                   1080 ;	-----------------------------------------
+                                   1081 ;	 function TIM2_GetCounter
+                                   1082 ;	-----------------------------------------
+      00047C                       1083 _TIM2_GetCounter:
+      00047C 89               [ 2] 1084 	pushw	x
+                                   1085 ;	libstm8s/src/stm8s_tim2.c: 1039: tmpcntr =  ((uint16_t)TIM2->CNTRH << 8);
+      00047D AE 53 0C         [ 2] 1086 	ldw	x, #0x530c
+      000480 F6               [ 1] 1087 	ld	a, (x)
+      000481 95               [ 1] 1088 	ld	xh, a
+      000482 4F               [ 1] 1089 	clr	a
+      000483 4F               [ 1] 1090 	clr	a
+      000484 97               [ 1] 1091 	ld	xl, a
+      000485 1F 01            [ 2] 1092 	ldw	(0x01, sp), x
+                                   1093 ;	libstm8s/src/stm8s_tim2.c: 1041: return (uint16_t)( tmpcntr| (uint16_t)(TIM2->CNTRL));
+      000487 AE 53 0D         [ 2] 1094 	ldw	x, #0x530d
+      00048A F6               [ 1] 1095 	ld	a, (x)
+      00048B 5F               [ 1] 1096 	clrw	x
+      00048C 97               [ 1] 1097 	ld	xl, a
+      00048D 1A 02            [ 1] 1098 	or	a, (0x02, sp)
+      00048F 02               [ 1] 1099 	rlwa	x
+      000490 1A 01            [ 1] 1100 	or	a, (0x01, sp)
+      000492 95               [ 1] 1101 	ld	xh, a
+      000493 5B 02            [ 2] 1102 	addw	sp, #2
+      000495 81               [ 4] 1103 	ret
+                                   1104 ;	libstm8s/src/stm8s_tim2.c: 1049: TIM2_Prescaler_TypeDef TIM2_GetPrescaler(void)
+                                   1105 ;	-----------------------------------------
+                                   1106 ;	 function TIM2_GetPrescaler
+                                   1107 ;	-----------------------------------------
+      000496                       1108 _TIM2_GetPrescaler:
+                                   1109 ;	libstm8s/src/stm8s_tim2.c: 1052: return (TIM2_Prescaler_TypeDef)(TIM2->PSCR);
+      000496 AE 53 0E         [ 2] 1110 	ldw	x, #0x530e
+      000499 F6               [ 1] 1111 	ld	a, (x)
+      00049A 81               [ 4] 1112 	ret
+                                   1113 ;	libstm8s/src/stm8s_tim2.c: 1068: FlagStatus TIM2_GetFlagStatus(TIM2_FLAG_TypeDef TIM2_FLAG)
+                                   1114 ;	-----------------------------------------
+                                   1115 ;	 function TIM2_GetFlagStatus
+                                   1116 ;	-----------------------------------------
+      00049B                       1117 _TIM2_GetFlagStatus:
+      00049B 52 05            [ 2] 1118 	sub	sp, #5
+                                   1119 ;	libstm8s/src/stm8s_tim2.c: 1076: tim2_flag_l = (uint8_t)(TIM2->SR1 & (uint8_t)TIM2_FLAG);
+      00049D AE 53 04         [ 2] 1120 	ldw	x, #0x5304
+      0004A0 F6               [ 1] 1121 	ld	a, (x)
+      0004A1 6B 03            [ 1] 1122 	ld	(0x03, sp), a
+      0004A3 7B 09            [ 1] 1123 	ld	a, (0x09, sp)
+      0004A5 14 03            [ 1] 1124 	and	a, (0x03, sp)
+      0004A7 6B 02            [ 1] 1125 	ld	(0x02, sp), a
+                                   1126 ;	libstm8s/src/stm8s_tim2.c: 1077: tim2_flag_h = (uint8_t)((uint16_t)TIM2_FLAG >> 8);
+      0004A9 7B 08            [ 1] 1127 	ld	a, (0x08, sp)
+      0004AB 0F 04            [ 1] 1128 	clr	(0x04, sp)
+      0004AD 6B 01            [ 1] 1129 	ld	(0x01, sp), a
+                                   1130 ;	libstm8s/src/stm8s_tim2.c: 1079: if ((tim2_flag_l | (uint8_t)(TIM2->SR2 & tim2_flag_h)) != (uint8_t)RESET )
+      0004AF AE 53 05         [ 2] 1131 	ldw	x, #0x5305
+      0004B2 F6               [ 1] 1132 	ld	a, (x)
+      0004B3 14 01            [ 1] 1133 	and	a, (0x01, sp)
+      0004B5 1A 02            [ 1] 1134 	or	a, (0x02, sp)
+      0004B7 4D               [ 1] 1135 	tnz	a
+      0004B8 27 03            [ 1] 1136 	jreq	00102$
+                                   1137 ;	libstm8s/src/stm8s_tim2.c: 1081: bitstatus = SET;
+      0004BA A6 01            [ 1] 1138 	ld	a, #0x01
+                                   1139 ;	libstm8s/src/stm8s_tim2.c: 1085: bitstatus = RESET;
+      0004BC 21                    1140 	.byte 0x21
+      0004BD                       1141 00102$:
+      0004BD 4F               [ 1] 1142 	clr	a
+      0004BE                       1143 00103$:
+                                   1144 ;	libstm8s/src/stm8s_tim2.c: 1087: return (FlagStatus)bitstatus;
+      0004BE 5B 05            [ 2] 1145 	addw	sp, #5
+      0004C0 81               [ 4] 1146 	ret
+                                   1147 ;	libstm8s/src/stm8s_tim2.c: 1103: void TIM2_ClearFlag(TIM2_FLAG_TypeDef TIM2_FLAG)
+                                   1148 ;	-----------------------------------------
+                                   1149 ;	 function TIM2_ClearFlag
+                                   1150 ;	-----------------------------------------
+      0004C1                       1151 _TIM2_ClearFlag:
+      0004C1 89               [ 2] 1152 	pushw	x
+                                   1153 ;	libstm8s/src/stm8s_tim2.c: 1109: TIM2->SR1 = (uint8_t)(~((uint8_t)(TIM2_FLAG)));
+      0004C2 7B 06            [ 1] 1154 	ld	a, (0x06, sp)
+      0004C4 43               [ 1] 1155 	cpl	a
+      0004C5 AE 53 04         [ 2] 1156 	ldw	x, #0x5304
+      0004C8 F7               [ 1] 1157 	ld	(x), a
+                                   1158 ;	libstm8s/src/stm8s_tim2.c: 1111: TIM2->SR2 = (uint8_t)(~((uint8_t)(TIM2_FLAG >> 8))); // [Roshan, 2015-Nov-09]
+      0004C9 7B 05            [ 1] 1159 	ld	a, (0x05, sp)
+      0004CB 0F 01            [ 1] 1160 	clr	(0x01, sp)
+      0004CD 43               [ 1] 1161 	cpl	a
+      0004CE AE 53 05         [ 2] 1162 	ldw	x, #0x5305
+      0004D1 F7               [ 1] 1163 	ld	(x), a
+      0004D2 85               [ 2] 1164 	popw	x
+      0004D3 81               [ 4] 1165 	ret
+                                   1166 ;	libstm8s/src/stm8s_tim2.c: 1124: ITStatus TIM2_GetITStatus(TIM2_IT_TypeDef TIM2_IT)
+                                   1167 ;	-----------------------------------------
+                                   1168 ;	 function TIM2_GetITStatus
+                                   1169 ;	-----------------------------------------
+      0004D4                       1170 _TIM2_GetITStatus:
+      0004D4 88               [ 1] 1171 	push	a
+                                   1172 ;	libstm8s/src/stm8s_tim2.c: 1132: TIM2_itStatus = (uint8_t)(TIM2->SR1 & TIM2_IT);
+      0004D5 AE 53 04         [ 2] 1173 	ldw	x, #0x5304
+      0004D8 F6               [ 1] 1174 	ld	a, (x)
+      0004D9 14 04            [ 1] 1175 	and	a, (0x04, sp)
+      0004DB 6B 01            [ 1] 1176 	ld	(0x01, sp), a
+                                   1177 ;	libstm8s/src/stm8s_tim2.c: 1134: TIM2_itEnable = (uint8_t)(TIM2->IER & TIM2_IT);
+      0004DD AE 53 03         [ 2] 1178 	ldw	x, #0x5303
+      0004E0 F6               [ 1] 1179 	ld	a, (x)
+      0004E1 14 04            [ 1] 1180 	and	a, (0x04, sp)
+                                   1181 ;	libstm8s/src/stm8s_tim2.c: 1136: if ((TIM2_itStatus != (uint8_t)RESET ) && (TIM2_itEnable != (uint8_t)RESET ))
+      0004E3 0D 01            [ 1] 1182 	tnz	(0x01, sp)
+      0004E5 27 06            [ 1] 1183 	jreq	00102$
+      0004E7 4D               [ 1] 1184 	tnz	a
+      0004E8 27 03            [ 1] 1185 	jreq	00102$
+                                   1186 ;	libstm8s/src/stm8s_tim2.c: 1138: bitstatus = SET;
+      0004EA A6 01            [ 1] 1187 	ld	a, #0x01
+                                   1188 ;	libstm8s/src/stm8s_tim2.c: 1142: bitstatus = RESET;
+      0004EC 21                    1189 	.byte 0x21
+      0004ED                       1190 00102$:
+      0004ED 4F               [ 1] 1191 	clr	a
+      0004EE                       1192 00103$:
+                                   1193 ;	libstm8s/src/stm8s_tim2.c: 1144: return (ITStatus)(bitstatus);
+      0004EE 5B 01            [ 2] 1194 	addw	sp, #1
+      0004F0 81               [ 4] 1195 	ret
+                                   1196 ;	libstm8s/src/stm8s_tim2.c: 1157: void TIM2_ClearITPendingBit(TIM2_IT_TypeDef TIM2_IT)
+                                   1197 ;	-----------------------------------------
+                                   1198 ;	 function TIM2_ClearITPendingBit
+                                   1199 ;	-----------------------------------------
+      0004F1                       1200 _TIM2_ClearITPendingBit:
+                                   1201 ;	libstm8s/src/stm8s_tim2.c: 1163: TIM2->SR1 = (uint8_t)(~TIM2_IT);
+      0004F1 7B 03            [ 1] 1202 	ld	a, (0x03, sp)
+      0004F3 43               [ 1] 1203 	cpl	a
+      0004F4 AE 53 04         [ 2] 1204 	ldw	x, #0x5304
+      0004F7 F7               [ 1] 1205 	ld	(x), a
+      0004F8 81               [ 4] 1206 	ret
+                                   1207 ;	libstm8s/src/stm8s_tim2.c: 1182: static void TI1_Config(uint8_t TIM2_ICPolarity,
+                                   1208 ;	-----------------------------------------
+                                   1209 ;	 function TI1_Config
+                                   1210 ;	-----------------------------------------
+      0004F9                       1211 _TI1_Config:
+      0004F9 88               [ 1] 1212 	push	a
+                                   1213 ;	libstm8s/src/stm8s_tim2.c: 1187: TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC1E);
+      0004FA 72 11 53 0A      [ 1] 1214 	bres	0x530a, #0
+                                   1215 ;	libstm8s/src/stm8s_tim2.c: 1190: TIM2->CCMR1  = (uint8_t)((uint8_t)(TIM2->CCMR1 & (uint8_t)(~(uint8_t)( TIM2_CCMR_CCxS | TIM2_CCMR_ICxF )))
+      0004FE AE 53 07         [ 2] 1216 	ldw	x, #0x5307
+      000501 F6               [ 1] 1217 	ld	a, (x)
+      000502 A4 0C            [ 1] 1218 	and	a, #0x0c
+      000504 6B 01            [ 1] 1219 	ld	(0x01, sp), a
+                                   1220 ;	libstm8s/src/stm8s_tim2.c: 1191: | (uint8_t)(((TIM2_ICSelection)) | ((uint8_t)( TIM2_ICFilter << 4))));
+      000506 7B 06            [ 1] 1221 	ld	a, (0x06, sp)
+      000508 4E               [ 1] 1222 	swap	a
+      000509 A4 F0            [ 1] 1223 	and	a, #0xf0
+      00050B 1A 05            [ 1] 1224 	or	a, (0x05, sp)
+      00050D 1A 01            [ 1] 1225 	or	a, (0x01, sp)
+      00050F AE 53 07         [ 2] 1226 	ldw	x, #0x5307
+      000512 F7               [ 1] 1227 	ld	(x), a
+                                   1228 ;	libstm8s/src/stm8s_tim2.c: 1194: if (TIM2_ICPolarity != TIM2_ICPOLARITY_RISING)
+      000513 0D 04            [ 1] 1229 	tnz	(0x04, sp)
+      000515 27 09            [ 1] 1230 	jreq	00102$
+                                   1231 ;	libstm8s/src/stm8s_tim2.c: 1196: TIM2->CCER1 |= TIM2_CCER1_CC1P;
+      000517 AE 53 0A         [ 2] 1232 	ldw	x, #0x530a
+      00051A F6               [ 1] 1233 	ld	a, (x)
+      00051B AA 02            [ 1] 1234 	or	a, #0x02
+      00051D F7               [ 1] 1235 	ld	(x), a
+      00051E 20 07            [ 2] 1236 	jra	00103$
+      000520                       1237 00102$:
+                                   1238 ;	libstm8s/src/stm8s_tim2.c: 1200: TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC1P);
+      000520 AE 53 0A         [ 2] 1239 	ldw	x, #0x530a
+      000523 F6               [ 1] 1240 	ld	a, (x)
+      000524 A4 FD            [ 1] 1241 	and	a, #0xfd
+      000526 F7               [ 1] 1242 	ld	(x), a
+      000527                       1243 00103$:
+                                   1244 ;	libstm8s/src/stm8s_tim2.c: 1203: TIM2->CCER1 |= TIM2_CCER1_CC1E;
+      000527 72 10 53 0A      [ 1] 1245 	bset	0x530a, #0
+      00052B 84               [ 1] 1246 	pop	a
+      00052C 81               [ 4] 1247 	ret
+                                   1248 ;	libstm8s/src/stm8s_tim2.c: 1222: static void TI2_Config(uint8_t TIM2_ICPolarity,
+                                   1249 ;	-----------------------------------------
+                                   1250 ;	 function TI2_Config
+                                   1251 ;	-----------------------------------------
+      00052D                       1252 _TI2_Config:
+      00052D 88               [ 1] 1253 	push	a
+                                   1254 ;	libstm8s/src/stm8s_tim2.c: 1227: TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC2E);
+      00052E AE 53 0A         [ 2] 1255 	ldw	x, #0x530a
+      000531 F6               [ 1] 1256 	ld	a, (x)
+      000532 A4 EF            [ 1] 1257 	and	a, #0xef
+      000534 F7               [ 1] 1258 	ld	(x), a
+                                   1259 ;	libstm8s/src/stm8s_tim2.c: 1230: TIM2->CCMR2 = (uint8_t)((uint8_t)(TIM2->CCMR2 & (uint8_t)(~(uint8_t)( TIM2_CCMR_CCxS | TIM2_CCMR_ICxF )))
+      000535 AE 53 08         [ 2] 1260 	ldw	x, #0x5308
+      000538 F6               [ 1] 1261 	ld	a, (x)
+      000539 A4 0C            [ 1] 1262 	and	a, #0x0c
+      00053B 6B 01            [ 1] 1263 	ld	(0x01, sp), a
+                                   1264 ;	libstm8s/src/stm8s_tim2.c: 1231: | (uint8_t)(( (TIM2_ICSelection)) | ((uint8_t)( TIM2_ICFilter << 4))));
+      00053D 7B 06            [ 1] 1265 	ld	a, (0x06, sp)
+      00053F 4E               [ 1] 1266 	swap	a
+      000540 A4 F0            [ 1] 1267 	and	a, #0xf0
+      000542 1A 05            [ 1] 1268 	or	a, (0x05, sp)
+      000544 1A 01            [ 1] 1269 	or	a, (0x01, sp)
+      000546 AE 53 08         [ 2] 1270 	ldw	x, #0x5308
+      000549 F7               [ 1] 1271 	ld	(x), a
+                                   1272 ;	libstm8s/src/stm8s_tim2.c: 1235: if (TIM2_ICPolarity != TIM2_ICPOLARITY_RISING)
+      00054A 0D 04            [ 1] 1273 	tnz	(0x04, sp)
+      00054C 27 09            [ 1] 1274 	jreq	00102$
+                                   1275 ;	libstm8s/src/stm8s_tim2.c: 1237: TIM2->CCER1 |= TIM2_CCER1_CC2P;
+      00054E AE 53 0A         [ 2] 1276 	ldw	x, #0x530a
+      000551 F6               [ 1] 1277 	ld	a, (x)
+      000552 AA 20            [ 1] 1278 	or	a, #0x20
+      000554 F7               [ 1] 1279 	ld	(x), a
+      000555 20 07            [ 2] 1280 	jra	00103$
+      000557                       1281 00102$:
+                                   1282 ;	libstm8s/src/stm8s_tim2.c: 1241: TIM2->CCER1 &= (uint8_t)(~TIM2_CCER1_CC2P);
+      000557 AE 53 0A         [ 2] 1283 	ldw	x, #0x530a
+      00055A F6               [ 1] 1284 	ld	a, (x)
+      00055B A4 DF            [ 1] 1285 	and	a, #0xdf
+      00055D F7               [ 1] 1286 	ld	(x), a
+      00055E                       1287 00103$:
+                                   1288 ;	libstm8s/src/stm8s_tim2.c: 1245: TIM2->CCER1 |= TIM2_CCER1_CC2E;
+      00055E AE 53 0A         [ 2] 1289 	ldw	x, #0x530a
+      000561 F6               [ 1] 1290 	ld	a, (x)
+      000562 AA 10            [ 1] 1291 	or	a, #0x10
+      000564 F7               [ 1] 1292 	ld	(x), a
+      000565 84               [ 1] 1293 	pop	a
+      000566 81               [ 4] 1294 	ret
+                                   1295 ;	libstm8s/src/stm8s_tim2.c: 1262: static void TI3_Config(uint8_t TIM2_ICPolarity, uint8_t TIM2_ICSelection,
+                                   1296 ;	-----------------------------------------
+                                   1297 ;	 function TI3_Config
+                                   1298 ;	-----------------------------------------
+      000567                       1299 _TI3_Config:
+      000567 88               [ 1] 1300 	push	a
+                                   1301 ;	libstm8s/src/stm8s_tim2.c: 1266: TIM2->CCER2 &=  (uint8_t)(~TIM2_CCER2_CC3E);
+      000568 72 11 53 0B      [ 1] 1302 	bres	0x530b, #0
+                                   1303 ;	libstm8s/src/stm8s_tim2.c: 1269: TIM2->CCMR3 = (uint8_t)((uint8_t)(TIM2->CCMR3 & (uint8_t)(~( TIM2_CCMR_CCxS | TIM2_CCMR_ICxF)))
+      00056C AE 53 09         [ 2] 1304 	ldw	x, #0x5309
+      00056F F6               [ 1] 1305 	ld	a, (x)
+      000570 A4 0C            [ 1] 1306 	and	a, #0x0c
+      000572 6B 01            [ 1] 1307 	ld	(0x01, sp), a
+                                   1308 ;	libstm8s/src/stm8s_tim2.c: 1270: | (uint8_t)(( (TIM2_ICSelection)) | ((uint8_t)( TIM2_ICFilter << 4))));
+      000574 7B 06            [ 1] 1309 	ld	a, (0x06, sp)
+      000576 4E               [ 1] 1310 	swap	a
+      000577 A4 F0            [ 1] 1311 	and	a, #0xf0
+      000579 1A 05            [ 1] 1312 	or	a, (0x05, sp)
+      00057B 1A 01            [ 1] 1313 	or	a, (0x01, sp)
+      00057D AE 53 09         [ 2] 1314 	ldw	x, #0x5309
+      000580 F7               [ 1] 1315 	ld	(x), a
+                                   1316 ;	libstm8s/src/stm8s_tim2.c: 1274: if (TIM2_ICPolarity != TIM2_ICPOLARITY_RISING)
+      000581 0D 04            [ 1] 1317 	tnz	(0x04, sp)
+      000583 27 09            [ 1] 1318 	jreq	00102$
+                                   1319 ;	libstm8s/src/stm8s_tim2.c: 1276: TIM2->CCER2 |= TIM2_CCER2_CC3P;
+      000585 AE 53 0B         [ 2] 1320 	ldw	x, #0x530b
+      000588 F6               [ 1] 1321 	ld	a, (x)
+      000589 AA 02            [ 1] 1322 	or	a, #0x02
+      00058B F7               [ 1] 1323 	ld	(x), a
+      00058C 20 07            [ 2] 1324 	jra	00103$
+      00058E                       1325 00102$:
+                                   1326 ;	libstm8s/src/stm8s_tim2.c: 1280: TIM2->CCER2 &= (uint8_t)(~TIM2_CCER2_CC3P);
+      00058E AE 53 0B         [ 2] 1327 	ldw	x, #0x530b
+      000591 F6               [ 1] 1328 	ld	a, (x)
+      000592 A4 FD            [ 1] 1329 	and	a, #0xfd
+      000594 F7               [ 1] 1330 	ld	(x), a
+      000595                       1331 00103$:
+                                   1332 ;	libstm8s/src/stm8s_tim2.c: 1283: TIM2->CCER2 |= TIM2_CCER2_CC3E;
+      000595 72 10 53 0B      [ 1] 1333 	bset	0x530b, #0
+      000599 84               [ 1] 1334 	pop	a
+      00059A 81               [ 4] 1335 	ret
+                                   1336 	.area CODE
+                                   1337 	.area INITIALIZER
+                                   1338 	.area CABS (ABS)
