@@ -1,15 +1,31 @@
 #pragma once
 
+typedef enum
+{
+	IDLE,
+	BUS_WAIT,
+	TRANSMITTING,
+	ACK_WAIT
+} TX_STATE;
+
+typedef enum
+{
+	IDLE,
+	RECEIVING
+} RX_STATE;
 
 typedef struct
 {
     //Bus timming info
     //Last idle time - last time idle cb was called
     //*current time // pointer to current time
-    //State machine state
-    //RX mailbox - mailbox incoming packets are written to
-        
-    //mailbox*[] - array of mailboxes* we pass packets to when they are for this node 
+    RX_STATE rx_state;    
+    snet_pkt_header * rx_pkt;
+    
+    TX_STATE tx_state;
+    //Time of PKT tx, for ACK timeout
+    snet_pkt_header * tx_pkt;
+    
 } 485l2_stack_ctx;
 
 /**** Functions implemented by the hardware spesific implementation *****/
