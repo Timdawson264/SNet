@@ -15,14 +15,16 @@ all: bin/main.ihx
 clean:
 	-rm -f *.asm *.rel *.lst *.sym
 	-rm -f libstm8s/src/*.asm libstm8s/src/*.rel libstm8s/src/*.lst libstm8s/src/*.sym
-	-rm -f bin/* lib/*
+	-rm -rf bin lib
 
 %.rel : %.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 lib/libstm8s.a : $(libstm8_o)
+	mkdir lib
 	$(AR) r $@ $^
 
 
 bin/main.ihx : $(SRC_C) $(LIBS)
+	mkdir bin
 	$(CC) $(CFLAGS) --out-fmt-ihx -o $@ $(LDFLAGS) -llibstm8s.a $<
