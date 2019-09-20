@@ -1,0 +1,6 @@
+build
+*.rel
+*.sym
+*.lst
+*.a
+*.o
