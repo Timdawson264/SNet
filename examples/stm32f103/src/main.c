@@ -42,9 +42,7 @@ main(void)
 
         if (count == 0)
         {
-            snet_hal_set_direction(SNET_HAL_DIR_TX);
-            snet_hal_transmit(buf, sizeof(buf));
-            snet_hal_set_direction(SNET_HAL_DIR_RX);
+            snet_send(buf, sizeof(buf));
             count = 10;
         }
         else

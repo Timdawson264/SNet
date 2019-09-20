@@ -63,7 +63,7 @@ ringbuf_full(ringbuf_t *rb);
  * @returns @c TRUE if the octet was successfully added.
  */
 bool
-rinbuf_push(ringbuf_t *rb, uint8_t octet);
+ringbuf_push(ringbuf_t *rb, uint8_t octet);
 
 
 /**
