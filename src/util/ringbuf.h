@@ -11,10 +11,10 @@
 typedef struct ringbuf_t
 {
     /** Pointer to the next octet that may be read. */
-    uint16_t read_ptr;
+    volatile uint16_t read_ptr;
 
     /** Pointer to the next free spot where data may be written. */
-    uint16_t write_ptr;
+    volatile uint16_t write_ptr;
 
     /** The memory backing the ring buffer. */
     uint8_t *data;
@@ -44,6 +44,13 @@ ringbuf_init(ringbuf_t *rb, uint8_t *buffer, uint16_t capacity);
 bool
 ringbuf_empty(ringbuf_t *rb);
 
+/**
+ *  Number of octets in the buffer
+ * 
+ *  @returns @c the number of octets in the buffer
+ */
+uint16_t
+ringbuf_size( ringbuf_t *rb );
 
 /**
  * Checks if there is any free space in the ring buffer.
@@ -76,6 +83,29 @@ ringbuf_push(ringbuf_t *rb, uint8_t octet);
  */
 bool
 ringbuf_pop(ringbuf_t *rb, uint8_t *octet);
+
+/** 
+ * Reads an octet from the ring buffer, without removing it.
+ * 
+ * @param rb the ring buffer to remove from.
+ * @param offset the offset from which to read the octect.
+ * @param octet pointer to somewhere a single octet can be copied to.
+ * 
+ * @returns @c TRUE if an octet was successfully read from the buffer.
+ */
+bool
+ringbuf_peek(ringbuf_t *rb, uint16_t offset, uint8_t *octet);
+
+/** 
+ * Removes octects from the ringbuffer
+ * 
+ * @param rb the ring buffer to seek.
+ * @param length the number of octects to remove
+ * 
+ * @returns @c TRUE if an octets were successfully removed from the buffer.
+ */
+bool
+ringbuf_seek( ringbuf_t *rb, uint16_t length );
 
 
 #endif

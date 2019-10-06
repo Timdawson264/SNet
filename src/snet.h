@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 #include "printf.h"
 #include "snet_hal.h"
@@ -29,8 +30,7 @@ snet_update(void);
  * @param data the data to send.
  * @param length the number of octets to send.
  */
-void
-snet_send(uint8_t *data, uint16_t length);
-
+bool
+snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack );
 
 #endif

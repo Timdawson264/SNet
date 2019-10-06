@@ -21,6 +21,7 @@ SNET_DIR ?= ../..
 
 SNET_SRCS_C = \
     src/snet.c \
+    src/util/crc32.c \
     src/util/printf.c \
     src/util/ringbuf.c
 

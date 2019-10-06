@@ -2,6 +2,8 @@
 #define SNET_HAL_H__
 
 #include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
 
 
 /** Bus symbol rate in bits-per-second. */
@@ -80,6 +82,27 @@ snet_hal_is_transmitting(void);
  */
 void
 snet_hal_set_direction(snet_hal_direction_t direction);
+
+/**
+ * Caclculates a crc32 using builtin hardware if avalible
+ * not required to be implemeted
+ *
+ * @param Data the Data to checksum
+ * @param Length the number of octects of data
+ * @returns @c The CRC32
+ */
+//~ uint32_t
+//~ snet_hal_calc_crc32( uint8_t* data, uint16_t length ) __attribute__((weak, alias("snet_crc32_bitwise"))) ;
+
+/**
+ * Data structer that holds data and length info.
+ * used to pass multiple buffers to the TX
+ */
+typedef struct iovec_t
+{
+	uint8_t* data;
+	uint16_t length;
+} iovec_t;
 
 
 /* TODO: We'll probably want a means to schedule a hardware timer interrupt. */
