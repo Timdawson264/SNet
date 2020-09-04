@@ -65,6 +65,19 @@ snet_hal_transmit(uint8_t *data, uint16_t length);
 void
 snet_hal_receive(uint8_t *data, uint16_t length);
 
+/**
+ * Implemented within SNet to allow the HAL layer to pass received data up.
+ *
+ * @note this may be called from an interrupt context. Received data wont be
+ * processed until @ref snet_update() is called.
+ *
+ * @param data the received octet.
+ *
+ * @returns the number of octets copied into @ref data.
+ */
+void
+snet_hal_receive_byte(uint8_t data);
+
 
 /**
  * Checks the current status of the transmitter.

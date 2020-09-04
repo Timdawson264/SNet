@@ -1,6 +1,6 @@
-#include <stdint.h>
-
+#include <stdlib.h>
 #include "stm8s_conf.h"
+#include "snet.h"
 
 void InitialiseSystemClock()
 {
@@ -29,17 +29,33 @@ void delay()
 		while( --c ) nop();
 }
 
-
 void main()
 {
-
+    uint8_t test = 0;
+    test++;
 	InitialiseSystemClock();
+    snet_init(); //INIT the network stack
 	GPIO_Init(GPIOB, GPIO_PIN_5, GPIO_MODE_OUT_OD_HIZ_SLOW);
+
+    const char* str = "Hello World\n";
 
 	while(1)
 	{
-		delay();
-		GPIO_WriteReverse(GPIOB,GPIO_PIN_5);
+            
+        //if PKT sends toggle LED
+        snet_send( str, 12, 999, false );
+        GPIO_WriteReverse(GPIOB,GPIO_PIN_5);
+        delay();
+        snet_update();
 	}
+}
 
+void UART1_TX_IRQHandler(void) __interrupt(17)
+{
+
+}
+
+void UART1_RX_IRQHandler(void) __interrupt(18)
+{
+    snet_hal_receive_byte( UART1_ReceiveData8() );
 }

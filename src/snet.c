@@ -1,11 +1,11 @@
 #include "snet.h"
 
-#include <string.h>
-
-#define SNET_DEBUG
+//#define SNET_DEBUG
 #include "snet_internal.h"
 
-//TODO: Consider Async TX
+
+//TODO: Async TX
+//TODO: Irq RX
 static uint8_t rx_buf[64];
 static snet_stack_ctx stack_ctx;
 
@@ -19,7 +19,7 @@ snet_init(void)
     ringbuf_init(&stack_ctx.rx_rb, rx_buf, sizeof(rx_buf));
 
     snet_hal_init();
-    snet_hal_set_direction(SNET_HAL_DIR_IDLE);
+    snet_hal_set_direction(SNET_HAL_DIR_RX);
     stack_ctx.ADDR = 1;
 }
 
@@ -36,7 +36,10 @@ snet_update(void)
 		case SNET_TX_BUS_WAIT:
 		{
 			//DO collision avoidance here
-			
+			//if last seen time < avoid time. break
+
+			//else set bus to TX and send.
+			snet_hal_set_direction( SNET_HAL_DIR_TX );
 			//TODO: Switch to iovec and async
 			snet_hal_transmit( (uint8_t*)&stack_ctx.tx_pkt.header, SNET_PKT_HEADER_LEN );
 			snet_hal_transmit( stack_ctx.tx_pkt.data, stack_ctx.tx_pkt.header.data_length );
@@ -48,6 +51,9 @@ snet_update(void)
 			if( snet_hal_is_transmitting() )
 				break;
 				
+			snet_hal_set_direction( SNET_HAL_DIR_RX );
+
+			//Decide next state based on REQACK flag
 			if( stack_ctx.tx_pkt.header.flags & SNET_PKT_FLAG_REQACK != 0 )
 			{
 				//We need to now wait for the ack
@@ -57,7 +63,7 @@ snet_update(void)
 			else
 			{
 				//We Done
-				stack_ctx.tx_state = SNET_TX_IDLE;
+				stack_ctx.tx_state = SNET_TX_IDLE;	
 			}
 			break;
 		}
@@ -90,14 +96,6 @@ snet_update(void)
 		}
 	}
 
-    /* Handle transmit completion. */
-    if (!snet_hal_is_transmitting() && stack_ctx.tx_state == SNET_TX_TRANSMITTING )
-    {
-        snet_hal_set_direction(SNET_HAL_DIR_RX);
-        //TODO check ACKREQ in TX_PKT
-        stack_ctx.tx_state = SNET_TX_IDLE;
-    }
-
     /* Process any received data. */
     //~ while (ringbuf_pop(&stack_ctx.rx_rb, &ch))
     //~ {
@@ -110,13 +108,13 @@ snet_calc_header_checksum( snet_pkt_header *pkt_header )
 {
 	pkt_header->header_check = 0;	
 	uint8_t * header = (uint8_t*)pkt_header;
-	
+
 	uint8_t result = 0;
 	for( size_t i=0; i<SNET_PKT_HEADER_LEN; i++)
 	{
-		result += header[i];
+		result = ( result + header[i] ) & 0xff ;
 	}
-	
+
 	pkt_header->header_check = result;
 }
 
@@ -155,4 +153,10 @@ snet_hal_receive(uint8_t *data, uint16_t length)
     {
         ringbuf_push(&stack_ctx.rx_rb, data[i]);
     }
+}
+
+void
+snet_hal_receive_byte(uint8_t data)
+{
+	ringbuf_push(&stack_ctx.rx_rb, data);   
 }

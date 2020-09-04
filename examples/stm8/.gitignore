@@ -4,3 +4,4 @@ build
 *.lst
 *.a
 *.o
+*.asm
