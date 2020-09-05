@@ -42,7 +42,7 @@ main(void)
 
         if (count == 0)
         {
-            snet_send(buf, sizeof(buf), 2, false );
+            snet_send(buf, sizeof(buf), 2, false, true );
             count = 10;
         }
         else

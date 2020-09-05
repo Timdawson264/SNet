@@ -72,7 +72,7 @@ INCLUDE += $(addprefix $(STM_DIR)/, $(STM_INCLUDE))
 #
 CFLAGS += -mthumb -mcpu=cortex-m3 -mfloat-abi=soft
 CFLAGS += $(addprefix -D, $(STM_DEFS))
-CFLAGS += -std=c11 -Os -g3
+CFLAGS += -std=c11 -Os -g3 -flto
 CFLAGS += -ffunction-sections -fdata-sections -fno-builtin
 CFLAGS += $(addprefix -I, $(INCLUDE))
 
@@ -81,9 +81,8 @@ CFLAGS_WARN += -Wall -Werror -Wno-format
 
 LFLAGS += -L$(STM_DIR) -TSTM32F103C8Tx_FLASH.ld
 LFLAGS += --specs=nano.specs
-LFLAGS += -lc -lnosys
+LFLAGS += -lc -lnosys -flto
 LFLAGS += -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
-
 
 OBJS = 	$(addprefix $(BUILD_DIR)/src/, $(SRCS_C:.c=.o)) \
 	$(addprefix $(BUILD_DIR)/src/, $(SRCS_S:.s=.o)) \

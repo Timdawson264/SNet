@@ -49,7 +49,7 @@ void main()
         //snet_send( str, 12, 999, false, true );
         GPIO_WriteReverse(GPIOB,GPIO_PIN_5);
         systick_delayms(500);
-        snet_update();
+        //snet_update();
 	}
 }
 

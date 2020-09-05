@@ -7,7 +7,7 @@ void
 systick_init(void);
 
 uint32_t 
-systick_ticks_us(void);
+systick_epoch_us(void);
 
 uint32_t 
 systick_epoch_ms(void);

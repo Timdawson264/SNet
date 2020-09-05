@@ -29,10 +29,10 @@ snet_update(void)
 	
 	switch( stack_ctx.tx_state )
 	{
-		case SNET_TX_IDLE: 
-		{
-			break;
-		}
+		// case SNET_TX_IDLE: 
+		// {
+		// 	break;
+		// }
 		case SNET_TX_BUS_WAIT:
 		{
 			//DO collision avoidance here
@@ -68,34 +68,34 @@ snet_update(void)
 			}
 			break;
 		}
-		case SNET_TX_ACK_WAIT:
-		{
-			//if( cur_time - TX_TIME > retry_timeout )
-			//	stack_ctx.tx_state = SNET_TX_BUS_WAIT; //resend
-			break;
-		}
+		// case SNET_TX_ACK_WAIT:
+		// {
+		// 	//if( cur_time - TX_TIME > retry_timeout )
+		// 	//	stack_ctx.tx_state = SNET_TX_BUS_WAIT; //resend
+		// 	break;
+		// }
 	}
 
 
-	switch( stack_ctx.rx_state )
-	{
-		case SNET_RX_IDLE:
-		{
-			break;
-		}
-		case SNET_RX_HEADER:
-		{
-			break;
-		}
-		case SNET_RX_DATA:
-		{
-			break;
-		}
-		case SNET_RX_FINAL:
-		{
-			break;
-		}
-	}
+	// switch( stack_ctx.rx_state )
+	// {
+	// 	case SNET_RX_IDLE:
+	// 	{
+	// 		break;
+	// 	}
+	// 	case SNET_RX_HEADER:
+	// 	{
+	// 		break;
+	// 	}
+	// 	case SNET_RX_DATA:
+	// 	{
+	// 		break;
+	// 	}
+	// 	case SNET_RX_FINAL:
+	// 	{
+	// 		break;
+	// 	}
+	// }
 
     /* Process any received data. */
     //~ while (ringbuf_pop(&stack_ctx.rx_rb, &ch))
