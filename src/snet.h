@@ -32,6 +32,6 @@ snet_update(void);
  * @param length the number of octets to send.
  */
 bool
-snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack );
+snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool crc );
 
 #endif

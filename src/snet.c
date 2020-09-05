@@ -50,7 +50,8 @@ snet_update(void)
 		{
 			if( snet_hal_is_transmitting() )
 				break;
-				
+			
+			//TX is finished, we can switch back to Listening.
 			snet_hal_set_direction( SNET_HAL_DIR_RX );
 
 			//Decide next state based on REQACK flag
@@ -119,24 +120,32 @@ snet_calc_header_checksum( snet_pkt_header *pkt_header )
 }
 
 bool
-snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack )
+snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool crc )
 {
-	if( stack_ctx.tx_state != SNET_TX_IDLE )
+	if( stack_ctx.tx_state != SNET_TX_IDLE || stack_ctx.rx_state != SNET_RX_IDLE )
 			return false;
 			
-	stack_ctx.tx_pkt.priority = 7;
+	stack_ctx.tx_pkt.priority = 4;
 	memset( (void*) &stack_ctx.tx_pkt.header, 0, SNET_PKT_HEADER_LEN );
 	stack_ctx.tx_pkt.header.preamble = 0xAA;
 	stack_ctx.tx_pkt.header.dst_addr = dst_addr;
 	stack_ctx.tx_pkt.header.src_addr = stack_ctx.ADDR;
 	stack_ctx.tx_pkt.data = data;
 	stack_ctx.tx_pkt.header.data_length = length;		
-	if( req_ack )
+
+	if( req_ack ) 
+	{
 		stack_ctx.tx_pkt.header.flags = SNET_PKT_FLAG_REQACK;
+	}
+
+	if( crc )
+	{
+		stack_ctx.tx_pkt.header.flags = SNET_PKT_FLAG_CRC;
+		stack_ctx.tx_pkt.crc = snet_crc32_bitwise( data, length );
+	}
 	
 	snet_calc_header_checksum( &stack_ctx.tx_pkt.header );
-	stack_ctx.tx_pkt.crc = snet_crc32_bitwise( data, length );
-	
+
 	//Start the TX chain of events
 	stack_ctx.tx_state = SNET_TX_BUS_WAIT;
 	

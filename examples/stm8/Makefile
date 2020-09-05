@@ -13,7 +13,7 @@ libstm8_c := libstm8s/src/stm8s_clk.c libstm8s/src/stm8s_gpio.c libstm8s/src/stm
 libstm8_o := $(libstm8_c:.c=.rel)
 libsnet_o := $(libsnet_c:.c=.rel)
 
-SRC_C := src/main.c src/snet_hal.c
+SRC_C := src/main.c src/snet_hal.c src/systick.c
 SRC_O := $(SRC_C:.c=.rel)
 
 ALL_d := $(SRC_C:.c=.d) $(libsnet_c:.c=.d) $(libstm8_c:.c=.d)
@@ -39,7 +39,7 @@ lib/libsnet.a : $(libsnet_o)
 
 bin/main.ihx : $(SRC_O) | lib/libsnet.a lib/libstm8s.a
 	mkdir -p bin
-	$(CC) $(CFLAGS) --out-fmt-ihx -o $@ $(LDFLAGS) $^
+	$(CC) $(CFLAGS) --out-fmt-ihx -o $@ $^ $(LDFLAGS) 
 
 flash: bin/main.ihx
 	stm8flash -c stlinkv2 -w $< -p stm8s103f3

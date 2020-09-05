@@ -59,4 +59,12 @@ void snet_hal_set_direction(snet_hal_direction_t direction)
 }
 
 
+void UART1_TX_IRQHandler(void) __interrupt(17)
+{
 
+}
+
+void UART1_RX_IRQHandler(void) __interrupt(18)
+{
+    snet_hal_receive_byte( UART1_ReceiveData8() );
+}

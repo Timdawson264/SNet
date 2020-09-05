@@ -1,6 +1,12 @@
 #include <stdlib.h>
 #include "stm8s_conf.h"
 #include "snet.h"
+#include "systick.h"
+
+//Main must contain the Decl of the IRQ funcs
+void Systick_IRQ(void) __interrupt(23);
+void UART1_RX_IRQHandler(void) __interrupt(18);
+void UART1_TX_IRQHandler(void) __interrupt(17);
 
 void InitialiseSystemClock()
 {
@@ -20,42 +26,31 @@ void InitialiseSystemClock()
     while (CLK->SWCR & CLK_SWCR_SWBSY != 0 );        //  Pause while the clock switch is busy.
 }
 
-void delay()
-{
-
-	uint16_t c = 0;
-        uint16_t i = 0;
-	for( i=0; i<10; i++)
-		while( --c ) nop();
-}
-
 void main()
-{
-    uint8_t test = 0;
-    test++;
+{   
+    disableInterrupts();
 	InitialiseSystemClock();
+    
+    GPIO_Init(GPIOB, GPIO_PIN_5, GPIO_MODE_OUT_OD_HIZ_FAST);
+
+    systick_init(); //Setup Systicks
     snet_init(); //INIT the network stack
-	GPIO_Init(GPIOB, GPIO_PIN_5, GPIO_MODE_OUT_OD_HIZ_SLOW);
+	
+    enableInterrupts();
 
     const char* str = "Hello World\n";
 
+    //GPIO_WriteReverse(GPIOB,GPIO_PIN_5);
+    GPIO_WriteLow( GPIOB, GPIO_PIN_5 );
+
 	while(1)
 	{
-            
         //if PKT sends toggle LED
-        snet_send( str, 12, 999, false );
+        //snet_send( str, 12, 999, false, true );
         GPIO_WriteReverse(GPIOB,GPIO_PIN_5);
-        delay();
+        systick_delayms(500);
         snet_update();
 	}
 }
 
-void UART1_TX_IRQHandler(void) __interrupt(17)
-{
 
-}
-
-void UART1_RX_IRQHandler(void) __interrupt(18)
-{
-    snet_hal_receive_byte( UART1_ReceiveData8() );
-}

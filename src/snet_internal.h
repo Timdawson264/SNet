@@ -15,8 +15,13 @@
 #define DEBUG(...)
 #endif
 
-#define SNET_PKT_FLAG_REQACK (1<<0)
-#define SNET_PKT_FLAG_ACK (1<<1)
+typedef enum
+{
+	SNET_PKT_FLAG_REQACK = (1<<0), /* Please Send an Ack packet back. */
+	SNET_PKT_FLAG_ACK = (1<<1), /* This Packet Acks the just recived packet. */
+	SNET_PKT_FLAG_CRC = (1<<2) /* There is a CRC at the end of this packet. */
+
+} SNET_PKT_FLAG;
 
 typedef struct
 {
@@ -34,7 +39,7 @@ typedef struct
 	/* if header.data_length = 0 then below is not TXed */
 	uint8_t* data; /* header.data_length octets */
 	uint32_t crc;
-	uint8_t priority; /* 0 - 7, default is 7, ACK is 0 */ 
+	uint8_t priority; /* 0 - 7, default is 4, ACK is 0 */ 
 } snet_pkt;
 
 #define SNET_PKT_HEADER_LEN sizeof( snet_pkt_header )
