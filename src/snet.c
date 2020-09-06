@@ -1,13 +1,29 @@
 #include "snet.h"
+#include "rand.h"
 
 //#define SNET_DEBUG
 #include "snet_internal.h"
 
-
-//TODO: Async TX
-//TODO: Irq RX
 static uint8_t rx_buf[64];
-static snet_stack_ctx stack_ctx;
+static snet_stack_ctx stack_ctx = {
+	.ADDR=1,
+	.last_tx_tick = 0,
+	.last_rx_tick = 0
+};
+
+/* BUS Timmings */
+#define SNET_BUS_BYTE_TIME  ( 1000000ul / ( (uint32_t) SNET_HAL_BAUDRATE / 8ul ) )
+
+//MAX packet time is 255 + SNET_PKT_HEADER_LEN 
+/* Time in uS for a packet to TX */
+#define SNET_MAX_PACKET_TIME  ((uint32_t) ( (SNET_PKT_HEADER_LEN+255) * SNET_BUS_BYTE_TIME ) )
+#define SNET_PKT_HEADER_TIME ((uint32_t) ( SNET_PKT_HEADER_LEN  * SNET_BUS_BYTE_TIME ) )
+
+//Time before we resend after waiting for an ACK 
+#define SNET_ACK_TIMEOUT ((uint32_t) SNET_PKT_HEADER_TIME * 2 )
+//Time to wait after bus idle before packet send.
+#define SNET_PKT_CA_TIME(N) ((uint32_t) SNET_ACK_TIMEOUT * ( 2 + N ) )
+
 
 void
 snet_init(void)
@@ -18,9 +34,11 @@ snet_init(void)
 	//assert( sizeof( rx_buf ) > SNET_HEADER_LEN );
     ringbuf_init(&stack_ctx.rx_rb, rx_buf, sizeof(rx_buf));
 
+	/* Using the ADDR as the Rand seed should help stop collisions */
+	rand_init( (uint32_t)stack_ctx.ADDR );
+
     snet_hal_init();
-    snet_hal_set_direction(SNET_HAL_DIR_RX);
-    stack_ctx.ADDR = 1;
+	snet_hal_set_direction(SNET_HAL_DIR_RX);
 }
 
 void
@@ -33,47 +51,69 @@ snet_update(void)
 		// {
 		// 	break;
 		// }
+		case SNET_TX_PREP:
+		{
+			//Now wait a random time to avoid colliding.
+			//0-128 bytes random wait ~0-100ms @ 9600buad.
+			stack_ctx.random = (uint8_t) rand_val() & 0x7F;
+
+			stack_ctx.tx_state = SNET_TX_BUS_WAIT;
+			/* Intentional fall through */
+		}
+		/* Waiting for slot to start TXing */
 		case SNET_TX_BUS_WAIT:
 		{
 			//DO collision avoidance here
-			//if last seen time < avoid time. break
-
-			//else set bus to TX and send.
+			//if last seen time < hold time. come back and try again later
+			uint32_t hold_time = SNET_PKT_CA_TIME( stack_ctx.tx_pkt.priority );
+			hold_time += SNET_BUS_BYTE_TIME * stack_ctx.random; //Add the Random CA time.
+			if( ( snet_hal_get_ticks() - stack_ctx.last_rx_tick ) < hold_time )
+				break;
+		
 			snet_hal_set_direction( SNET_HAL_DIR_TX );
 			//TODO: Switch to iovec and async
 			snet_hal_transmit( (uint8_t*)&stack_ctx.tx_pkt.header, SNET_PKT_HEADER_LEN );
 			snet_hal_transmit( stack_ctx.tx_pkt.data, stack_ctx.tx_pkt.header.data_length );
-			snet_hal_transmit( (uint8_t*)&stack_ctx.tx_pkt.crc, sizeof(stack_ctx.tx_pkt.crc) );
-			break;
+			if( stack_ctx.tx_pkt.header.flags * SNET_PKT_FLAG_CRC )
+			{
+				snet_hal_transmit( (uint8_t*)&stack_ctx.tx_pkt.crc, sizeof(stack_ctx.tx_pkt.crc) );
+			}
+
+			//TX Queued
+			stack_ctx.tx_state = SNET_TX_TRANSMITTING;
+			/* Intentional fall through */
 		}
 		case SNET_TX_TRANSMITTING:
 		{
-			if( snet_hal_is_transmitting() )
-				break;
-			
+			//Micro is still sending data
+			if( snet_hal_is_transmitting() ) break;
+
 			//TX is finished, we can switch back to Listening.
 			snet_hal_set_direction( SNET_HAL_DIR_RX );
-
+			//Record time TX finished, so we can judge when to retransmit.
+			//Also count as RX so we dont DOS the bus (for random waits).
+			stack_ctx.last_rx_tick = stack_ctx.last_tx_tick = snet_hal_get_ticks();
 			//Decide next state based on REQACK flag
-			if( stack_ctx.tx_pkt.header.flags & SNET_PKT_FLAG_REQACK != 0 )
+			if( stack_ctx.tx_pkt.header.flags & SNET_PKT_FLAG_REQACK )
 			{
 				//We need to now wait for the ack
 				stack_ctx.tx_state = SNET_TX_ACK_WAIT;
-				//TODO: record systick time for retry timing
 			}
 			else
 			{
-				//We Done
+				//We are done
 				stack_ctx.tx_state = SNET_TX_IDLE;	
 			}
 			break;
 		}
-		// case SNET_TX_ACK_WAIT:
-		// {
-		// 	//if( cur_time - TX_TIME > retry_timeout )
-		// 	//	stack_ctx.tx_state = SNET_TX_BUS_WAIT; //resend
-		// 	break;
-		// }
+		case SNET_TX_ACK_WAIT:
+		{
+			if( snet_hal_get_ticks() - stack_ctx.last_tx_tick > SNET_ACK_TIMEOUT )
+			{
+				stack_ctx.tx_state = SNET_TX_PREP; //resend
+			}
+			break;
+		}
 	}
 
 
@@ -122,10 +162,11 @@ snet_calc_header_checksum( snet_pkt_header *pkt_header )
 bool
 snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool crc )
 {
-	if( stack_ctx.tx_state != SNET_TX_IDLE || stack_ctx.rx_state != SNET_RX_IDLE )
+	if( stack_ctx.tx_state != SNET_TX_IDLE )
 			return false;
 			
 	stack_ctx.tx_pkt.priority = 4;
+	//Reset header
 	memset( (void*) &stack_ctx.tx_pkt.header, 0, SNET_PKT_HEADER_LEN );
 	stack_ctx.tx_pkt.header.preamble = 0xAA;
 	stack_ctx.tx_pkt.header.dst_addr = dst_addr;
@@ -135,19 +176,19 @@ snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool
 
 	if( req_ack ) 
 	{
-		stack_ctx.tx_pkt.header.flags = SNET_PKT_FLAG_REQACK;
+		stack_ctx.tx_pkt.header.flags |= SNET_PKT_FLAG_REQACK;
 	}
 
 	if( crc )
 	{
-		stack_ctx.tx_pkt.header.flags = SNET_PKT_FLAG_CRC;
+		stack_ctx.tx_pkt.header.flags |= SNET_PKT_FLAG_CRC;
 		stack_ctx.tx_pkt.crc = snet_crc32_bitwise( data, length );
 	}
 	
 	snet_calc_header_checksum( &stack_ctx.tx_pkt.header );
 
 	//Start the TX chain of events
-	stack_ctx.tx_state = SNET_TX_BUS_WAIT;
+	stack_ctx.tx_state = SNET_TX_PREP;
 	
 	return true;
 }
@@ -157,6 +198,8 @@ void
 snet_hal_receive(uint8_t *data, uint16_t length)
 {
     int i;
+	
+	stack_ctx.last_rx_tick = snet_hal_get_ticks();
 
     for (i = 0; i < length; i++)
     {
@@ -167,5 +210,6 @@ snet_hal_receive(uint8_t *data, uint16_t length)
 void
 snet_hal_receive_byte(uint8_t data)
 {
+	stack_ctx.last_rx_tick = snet_hal_get_ticks();
 	ringbuf_push(&stack_ctx.rx_rb, data);   
 }

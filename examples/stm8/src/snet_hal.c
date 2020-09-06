@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "stm8s_conf.h"
 #include "snet_hal.h"
+#include "systick.h"
 
 void snet_hal_init(void)
 {
@@ -58,6 +59,10 @@ void snet_hal_set_direction(snet_hal_direction_t direction)
     }
 }
 
+uint32_t snet_hal_get_ticks()
+{
+    return systick_epoch_us();
+}
 
 void UART1_TX_IRQHandler(void) __interrupt(17)
 {

@@ -17,7 +17,8 @@ SNET_DIR ?= ../..
 SNET_SRCS_C = \
     src/snet.c \
     src/util/crc32.c \
-    src/util/ringbuf.c
+    src/util/ringbuf.c \
+	src/util/rand.c
 
 SNET_INCLUDE = src src/util
 
@@ -59,20 +60,24 @@ OBJS = 	$(addprefix $(BUILD_DIR)/src/, $(SRCS_C:.c=.rel) ) \
 		$(addprefix $(BUILD_DIR)/snet/, $(SNET_SRCS_C:.c=.rel) ) \
 		$(addprefix $(BUILD_DIR)/vendor/, $(STM_SRCS_C:.c=.rel) )
 
+ALL_D = $(OBJS:.rel=.d)
+
 all: $(BUILD_DIR)/$(TARGET).ihx
 
 clean:
 	-rm -rf build
 
--include $(ALL_d)
+-include $(ALL_D)
 $(BUILD_DIR)/src/%.rel: src/%.c
 	$(MKDIR) -p $(dir $@)
 	$(CC) $< $(CFLAGS) $(CFLAGS_WARN) -c -o $@
 
+-include $(ALL_D)
 $(BUILD_DIR)/snet/%.rel: $(SNET_DIR)/%.c
 	$(MKDIR) -p $(dir $@)
 	$(CC) $< $(CFLAGS) -D__FILENAME__=\"$(subst $(SNET_DIR)/,,$<)\" -c -o $@
 
+-include $(ALL_D)
 $(BUILD_DIR)/vendor/%.rel: $(STM_DIR)/%.c
 	$(MKDIR) -p $(dir $@)
 	$(CC) $< $(CFLAGS) -c -o $@

@@ -1,9 +1,9 @@
 #ifndef SNET_INTERNAL_H__
 #define SNET_INTERNAL_H__
 
-
 #include "util/ringbuf.h"
 #include "util/crc32.h"
+
 
 #ifdef SNET_DEBUG
 #define DEBUG(...)                                      \
@@ -38,8 +38,8 @@ typedef struct
 	snet_pkt_header header;
 	/* if header.data_length = 0 then below is not TXed */
 	uint8_t* data; /* header.data_length octets */
-	uint32_t crc;
-	uint8_t priority; /* 0 - 7, default is 4, ACK is 0 */ 
+	uint32_t crc; /* Send if SNET_PKT_FLAG_CRC is set. */
+	uint8_t priority; /* 0 - 7, default is 4, ACK is 0. TX Collision avoid multiplier. */ 
 } snet_pkt;
 
 #define SNET_PKT_HEADER_LEN sizeof( snet_pkt_header )
@@ -47,12 +47,12 @@ typedef struct
 typedef enum
 {
 	SNET_TX_IDLE, /* TX Not Needed */
-	SNET_TX_PREPED, /* TX is setup */
-	SNET_TX_BUS_WAIT, /* Doing collision avoidance */
-	SNET_TX_TRANSMITTING, /*Bus is in TX and bytes are flowing */
+	SNET_TX_PREP, /* Prep to send Packet. */
+	SNET_TX_BUS_WAIT, /* Doing collision avoidance waiting to start sending data */
+	SNET_TX_TRANSMITTING, /* Bus is in TX and bytes are flowing */
 	SNET_TX_ACK_WAIT      /* we set ACKREQ and are waiting for a response */
-
 } TX_STATE;
+
 typedef enum
 {
 	SNET_RX_IDLE,  /* RX is Disabled */
@@ -63,17 +63,22 @@ typedef enum
 
 typedef struct
 {
-	uint16_t ADDR;
-    //Bus timming info
-    //Last idle time - last time idle cb was called
-    //*current time // pointer to current time
+	/* Address of this node */
+	const uint16_t ADDR;
+
     RX_STATE rx_state;    
     snet_pkt rx_pkt;
-    ringbuf_t rx_rb; //Async RX
-        
+    ringbuf_t rx_rb; /* Async RX */
+	/* This tracks the last time bytes were recived on the bus */	
+	volatile uint32_t last_rx_tick;
+
     TX_STATE tx_state;
-    //Time of PKT tx, for ACK timeout
     snet_pkt tx_pkt;
+	/* This tracks the last TX frame sent, used for restarnsmit when REQACK set. */
+	volatile uint32_t last_tx_tick;
+
+	/* Used for collition avoidance */
+	uint8_t random;
 } snet_stack_ctx;
 
 #endif

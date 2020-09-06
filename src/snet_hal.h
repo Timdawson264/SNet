@@ -97,6 +97,16 @@ void
 snet_hal_set_direction(snet_hal_direction_t direction);
 
 /**
+ * Implemented by the HAL layer return a systick type monotonic clock
+ * 
+ * @note can be called from IRQ ctx should return microseconds. 
+ * @returns ticks since boot.
+ */
+uint32_t 
+snet_hal_get_ticks();
+
+
+/**
  * Caclculates a crc32 using builtin hardware if avalible
  * not required to be implemeted
  *
@@ -114,7 +124,7 @@ snet_hal_set_direction(snet_hal_direction_t direction);
 typedef struct iovec_t
 {
 	uint8_t* data;
-	uint16_t length;
+	uint8_t length;
 } iovec_t;
 
 

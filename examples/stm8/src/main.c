@@ -38,18 +38,20 @@ void main()
 	
     enableInterrupts();
 
-    const char* str = "Hello World\n";
-
-    //GPIO_WriteReverse(GPIOB,GPIO_PIN_5);
-    GPIO_WriteLow( GPIOB, GPIO_PIN_5 );
+    snet_send( "Hello World\n", 12, 0xAABB, true, true );
+    
+    uint16_t loop_LED = 0;
 
 	while(1)
 	{
-        //if PKT sends toggle LED
-        //snet_send( str, 12, 999, false, true );
-        GPIO_WriteReverse(GPIOB,GPIO_PIN_5);
-        systick_delayms(500);
-        //snet_update();
+        snet_update();
+        
+        uint16_t loop_ms = systick_epoch_ms();
+        if( loop_ms - loop_LED >= 500 )
+        {
+            GPIO_WriteReverse( GPIOB,GPIO_PIN_5 );
+            loop_LED = loop_ms;
+        }
 	}
 }
 
