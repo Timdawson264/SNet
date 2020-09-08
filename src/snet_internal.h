@@ -49,7 +49,8 @@ typedef enum
 	SNET_TX_IDLE, /* TX Not Needed */
 	SNET_TX_PREP, /* Prep to send Packet. */
 	SNET_TX_BUS_WAIT, /* Doing collision avoidance waiting to start sending data */
-	SNET_TX_TRANSMITTING, /* Bus is in TX and bytes are flowing */
+	SNET_TX_TRANSMIT_START, /* Start Async or Sync TX */
+	SNET_TX_TRANSMITTING, /* Bus is in TX and bytes are flowing, holding state. */
 	SNET_TX_ACK_WAIT      /* we set ACKREQ and are waiting for a response */
 } TX_STATE;
 
@@ -74,8 +75,9 @@ typedef struct
 
     TX_STATE tx_state;
     snet_pkt tx_pkt;
-	/* This tracks the last TX frame sent, used for restarnsmit when REQACK set. */
-	volatile uint32_t last_tx_tick;
+	/* This tracks the last TX frame sent, used for retransmit when REQACK set. */
+	/* This is also used for random waiting on TX wait state */
+	uint32_t tx_tick;
 
 	/* Used for collition avoidance */
 	uint8_t random;

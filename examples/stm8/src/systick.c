@@ -45,7 +45,7 @@ systick_epoch_us(void)
 uint32_t 
 systick_epoch_ms(void) 
 {
-    return systick_epoch_us() / 1000;
+    return systick_epoch_us()/1000;
 }
 
 void 

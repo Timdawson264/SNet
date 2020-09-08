@@ -30,8 +30,17 @@ snet_update(void);
  *
  * @param data the data to send.
  * @param length the number of octets to send.
+ * @param dst_addr The Destination node address
+ * @param req_ack should the packet be acknowledged by dst node
+ * @param crc enable crc32 over data.
  */
 bool
-snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool crc );
+snet_send(  uint8_t* data,
+            uint16_t length, 
+            uint16_t dst_addr, 
+            bool req_ack, 
+            bool crc, 
+            uint8_t priority
+        );
 
 #endif

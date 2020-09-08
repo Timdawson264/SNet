@@ -35,23 +35,25 @@ void main()
 
     systick_init(); //Setup Systicks
     snet_init(); //INIT the network stack
-	
+
     enableInterrupts();
-
-    snet_send( "Hello World\n", 12, 0xAABB, true, true );
     
-    uint16_t loop_LED = 0;
-
+    uint32_t loop_LED = 0;
+    
 	while(1)
 	{
+        uint32_t loop_ms = systick_epoch_ms();
         snet_update();
-        
-        uint16_t loop_ms = systick_epoch_ms();
-        if( loop_ms - loop_LED >= 500 )
-        {
-            GPIO_WriteReverse( GPIOB,GPIO_PIN_5 );
-            loop_LED = loop_ms;
-        }
+
+        // if( loop_ms - loop_LED > 100 )
+        // {
+            if( snet_send( NULL, 0, 0xFFFF, false, false, 1 ) )
+            {
+                //poll this untill send every x ms
+                // loop_LED = loop_ms; 
+                GPIO_WriteReverse( GPIOB, GPIO_PIN_5 );
+            }
+        // }
 	}
 }
 

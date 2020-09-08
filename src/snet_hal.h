@@ -7,7 +7,7 @@
 
 
 /** Bus symbol rate in bits-per-second. */
-#define SNET_HAL_BAUDRATE (9600)
+#define SNET_HAL_BAUDRATE (50000)
 
 
 /**
@@ -100,7 +100,7 @@ snet_hal_set_direction(snet_hal_direction_t direction);
  * Implemented by the HAL layer return a systick type monotonic clock
  * 
  * @note can be called from IRQ ctx should return microseconds. 
- * @returns ticks since boot.
+ * @returns milliseconds since boot.
  */
 uint32_t 
 snet_hal_get_ticks();

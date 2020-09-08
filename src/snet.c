@@ -4,26 +4,33 @@
 //#define SNET_DEBUG
 #include "snet_internal.h"
 
+#ifndef DEVICE_ADDR
+	#define DEVICE_ADDR 0x0001
+#endif
+	
+
 static uint8_t rx_buf[64];
 static snet_stack_ctx stack_ctx = {
-	.ADDR=1,
-	.last_tx_tick = 0,
+	.ADDR = DEVICE_ADDR,
+	.tx_tick = 0,
 	.last_rx_tick = 0
 };
 
 /* BUS Timmings */
-#define SNET_BUS_BYTE_TIME  ( 1000000ul / ( (uint32_t) SNET_HAL_BAUDRATE / 8ul ) )
+//#define SNET_BUS_BYTE_TIME  ( 1000000ul / ( (uint32_t) SNET_HAL_BAUDRATE / 8ul ) )
 
 //MAX packet time is 255 + SNET_PKT_HEADER_LEN 
 /* Time in uS for a packet to TX */
-#define SNET_MAX_PACKET_TIME  ((uint32_t) ( (SNET_PKT_HEADER_LEN+255) * SNET_BUS_BYTE_TIME ) )
-#define SNET_PKT_HEADER_TIME ((uint32_t) ( SNET_PKT_HEADER_LEN  * SNET_BUS_BYTE_TIME ) )
+//#define SNET_PKT_HEADER_TIME ((uint32_t) ( SNET_PKT_HEADER_LEN  * SNET_BUS_BYTE_TIME ) )
 
 //Time before we resend after waiting for an ACK 
-#define SNET_ACK_TIMEOUT ((uint32_t) SNET_PKT_HEADER_TIME * 2 )
+//#define SNET_ACK_TIMEOUT ((uint32_t) SNET_PKT_HEADER_TIME * 2 )
+#define SNET_ACK_TIMEOUT 1
 //Time to wait after bus idle before packet send.
-#define SNET_PKT_CA_TIME(N) ((uint32_t) SNET_ACK_TIMEOUT * ( 2 + N ) )
+#define SNET_PKT_CA_TIME(N) ( SNET_ACK_TIMEOUT * ( 1 + (N) ) )
 
+//https://en.wikipedia.org/wiki/Carrier-sense_multiple_access
+//Below TX state machine implements Non-persistent type
 
 void
 snet_init(void)
@@ -41,40 +48,65 @@ snet_init(void)
 	snet_hal_set_direction(SNET_HAL_DIR_RX);
 }
 
-void
-snet_update(void)
-{
-	
+bool
+_snet_update(void)
+{	
 	switch( stack_ctx.tx_state )
 	{
 		// case SNET_TX_IDLE: 
 		// {
+		// 	(void) stack_ctx;	
 		// 	break;
 		// }
+		
+		/* Check if Bus is IDLE, if not we must wait a random delay */
 		case SNET_TX_PREP:
 		{
-			//Now wait a random time to avoid colliding.
-			//0-128 bytes random wait ~0-100ms @ 9600buad.
-			stack_ctx.random = (uint8_t) rand_val() & 0x7F;
-
-			stack_ctx.tx_state = SNET_TX_BUS_WAIT;
+			/* Even if the Systick rolls over, the difference is unsigned
+			   so will return true and progress.
+			*/
+			uint16_t idle_time = SNET_PKT_CA_TIME( stack_ctx.tx_pkt.priority & 0x0F );
+			uint32_t time_since_bytes = snet_hal_get_ticks() - stack_ctx.last_rx_tick;
+			if( time_since_bytes >= idle_time )
+			{
+				// Bus idle TX now.
+				stack_ctx.tx_state = SNET_TX_TRANSMIT_START;
+			}
+			else
+			{
+			// 	//Bus not Idle Wait Random Time
+			// 	//Select A random time now. so we can poll wait in next state.
+			// 	//0-128 bytes random wait ~0-16ms
+				stack_ctx.random = (uint8_t) rand_val() & 0x0F;
+				//Record the time now. so we can calculate when random wait is over.
+				stack_ctx.tx_tick = snet_hal_get_ticks();
+				stack_ctx.tx_state = SNET_TX_BUS_WAIT;
+			}
 			/* Intentional fall through */
+			break;
 		}
-		/* Waiting for slot to start TXing */
+		/* Waiting for random time before attempting to TX */
 		case SNET_TX_BUS_WAIT:
 		{
-			//DO collision avoidance here
-			//if last seen time < hold time. come back and try again later
-			uint32_t hold_time = SNET_PKT_CA_TIME( stack_ctx.tx_pkt.priority );
-			hold_time += SNET_BUS_BYTE_TIME * stack_ctx.random; //Add the Random CA time.
-			if( ( snet_hal_get_ticks() - stack_ctx.last_rx_tick ) < hold_time )
-				break;
-		
+			//DO collision avoidance random wait here, polled...
+			uint32_t wait_time = stack_ctx.random;
+			/* This is the Time since we last tried to TX but found a busy bus */
+			uint32_t time_since_prep = snet_hal_get_ticks() - stack_ctx.tx_tick;
+			
+			if( time_since_prep >= wait_time )
+			{
+				//Random stand down done, try again.
+				stack_ctx.tx_state = SNET_TX_PREP;
+			}
+			break;
+		}
+		case SNET_TX_TRANSMIT_START:
+		{
 			snet_hal_set_direction( SNET_HAL_DIR_TX );
 			//TODO: Switch to iovec and async
 			snet_hal_transmit( (uint8_t*)&stack_ctx.tx_pkt.header, SNET_PKT_HEADER_LEN );
 			snet_hal_transmit( stack_ctx.tx_pkt.data, stack_ctx.tx_pkt.header.data_length );
-			if( stack_ctx.tx_pkt.header.flags * SNET_PKT_FLAG_CRC )
+			if( stack_ctx.tx_pkt.header.flags & SNET_PKT_FLAG_CRC )
 			{
 				snet_hal_transmit( (uint8_t*)&stack_ctx.tx_pkt.crc, sizeof(stack_ctx.tx_pkt.crc) );
 			}
@@ -92,7 +124,7 @@ snet_update(void)
 			snet_hal_set_direction( SNET_HAL_DIR_RX );
 			//Record time TX finished, so we can judge when to retransmit.
 			//Also count as RX so we dont DOS the bus (for random waits).
-			stack_ctx.last_rx_tick = stack_ctx.last_tx_tick = snet_hal_get_ticks();
+			stack_ctx.last_rx_tick = stack_ctx.tx_tick = snet_hal_get_ticks();
 			//Decide next state based on REQACK flag
 			if( stack_ctx.tx_pkt.header.flags & SNET_PKT_FLAG_REQACK )
 			{
@@ -107,8 +139,9 @@ snet_update(void)
 			break;
 		}
 		case SNET_TX_ACK_WAIT:
-		{
-			if( snet_hal_get_ticks() - stack_ctx.last_tx_tick > SNET_ACK_TIMEOUT )
+		{	
+			uint32_t time_since_tx = snet_hal_get_ticks() - stack_ctx.tx_tick;
+			if( time_since_tx > SNET_ACK_TIMEOUT )
 			{
 				stack_ctx.tx_state = SNET_TX_PREP; //resend
 			}
@@ -142,6 +175,8 @@ snet_update(void)
     //~ {
         //~ DEBUG("%02x\n", ch);
     //~ }
+
+	return false;
 }
 
 void 
@@ -159,13 +194,23 @@ snet_calc_header_checksum( snet_pkt_header *pkt_header )
 	pkt_header->header_check = result;
 }
 
+void
+snet_update(void)
+{
+	//uint8_t i;
+	//for( i=0; i < 4 && _snet_update() ; i++ );
+
+	_snet_update();
+}
+
+
 bool
-snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool crc )
+snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool crc, uint8_t priority )
 {
 	if( stack_ctx.tx_state != SNET_TX_IDLE )
 			return false;
 			
-	stack_ctx.tx_pkt.priority = 4;
+	stack_ctx.tx_pkt.priority = priority;
 	//Reset header
 	memset( (void*) &stack_ctx.tx_pkt.header, 0, SNET_PKT_HEADER_LEN );
 	stack_ctx.tx_pkt.header.preamble = 0xAA;
@@ -197,19 +242,22 @@ snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool
 void
 snet_hal_receive(uint8_t *data, uint16_t length)
 {
-    int i;
+	(void) data;
+	(void) length;
+    //int i;
 	
 	stack_ctx.last_rx_tick = snet_hal_get_ticks();
 
-    for (i = 0; i < length; i++)
-    {
-        ringbuf_push(&stack_ctx.rx_rb, data[i]);
-    }
+    // for (i = 0; i < length; i++)
+    // {
+    //     ringbuf_push(&stack_ctx.rx_rb, data[i]);
+    // }
 }
 
 void
 snet_hal_receive_byte(uint8_t data)
 {
-	stack_ctx.last_rx_tick = snet_hal_get_ticks();
-	ringbuf_push(&stack_ctx.rx_rb, data);   
+	(void) data;
+ 	stack_ctx.last_rx_tick = snet_hal_get_ticks();
+	//ringbuf_push(&stack_ctx.rx_rb, data);   
 }

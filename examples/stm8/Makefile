@@ -46,8 +46,8 @@ STM_INCLUDE = inc
 INCLUDE += $(addprefix $(STM_DIR)/, $(STM_INCLUDE))
 
 
-.PHONY: clean flash all
 
+CFLAGS += $(XCFLAGS)
 CFLAGS += -D$(TARGET) -mstm8
 CFLAGS += --Werror --opt-code-size -MMD
 CFLAGS += --std-sdcc99
@@ -88,12 +88,14 @@ $(BUILD_DIR)/all.a: $(OBJS)
 	$(AR) r $@ $^
 
 #Link all with the main.rel
-$(BUILD_DIR)/$(TARGET).ihx: build/src/main.rel | build/all.a
+$(BUILD_DIR)/$(TARGET).ihx: build/src/main.rel build/all.a
 	$(MKDIR) -p $(dir $@)
-	$(CC) $(CFLAGS) $(LFLAGS) --out-fmt-ihx -o $@ $^ 
+	$(CC) $(CFLAGS) $(LFLAGS) --out-fmt-ihx -o $@ $< 
 
 flash: $(BUILD_DIR)/$(TARGET).ihx
 	stm8flash -c stlinkv2 -w $< -p stm8s103f3
+
+.PHONY: clean flash all
 
 #
 # TOOLCHAIN
