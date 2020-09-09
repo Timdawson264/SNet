@@ -90,7 +90,8 @@ $(BUILD_DIR)/all.a: $(OBJS)
 #Link all with the main.rel
 $(BUILD_DIR)/$(TARGET).ihx: build/src/main.rel build/all.a
 	$(MKDIR) -p $(dir $@)
-	$(CC) $(CFLAGS) $(LFLAGS) --out-fmt-ihx -o $@ $< 
+	$(CC) $(CFLAGS) $(LFLAGS) --out-fmt-ihx -o $@ $<
+	$(CC) $(CFLAGS) $(LFLAGS) --out-fmt-elf -o $(@:.ihx=.elf) $<
 
 flash: $(BUILD_DIR)/$(TARGET).ihx
 	stm8flash -c stlinkv2 -w $< -p stm8s103f3

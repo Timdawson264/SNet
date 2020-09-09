@@ -23,7 +23,8 @@ SNET_SRCS_C = \
     src/snet.c \
     src/util/crc32.c \
     src/util/printf.c \
-    src/util/ringbuf.c
+    src/util/ringbuf.c \
+	src/util/rand.c
 
 SNET_INCLUDE = src src/util
 
@@ -72,7 +73,7 @@ INCLUDE += $(addprefix $(STM_DIR)/, $(STM_INCLUDE))
 #
 CFLAGS += -mthumb -mcpu=cortex-m3 -mfloat-abi=soft
 CFLAGS += $(addprefix -D, $(STM_DEFS))
-CFLAGS += -std=c11 -Os -g3 -flto
+CFLAGS += -std=c11 -Os -g3 -flto -MMD
 CFLAGS += -ffunction-sections -fdata-sections -fno-builtin
 CFLAGS += $(addprefix -I, $(INCLUDE))
 
@@ -84,20 +85,23 @@ LFLAGS += --specs=nano.specs
 LFLAGS += -lc -lnosys -flto
 LFLAGS += -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
 
-OBJS = 	$(addprefix $(BUILD_DIR)/src/, $(SRCS_C:.c=.o)) \
+OBJS = $(addprefix $(BUILD_DIR)/src/, $(SRCS_C:.c=.o)) \
 	$(addprefix $(BUILD_DIR)/src/, $(SRCS_S:.s=.o)) \
 	$(addprefix $(BUILD_DIR)/snet/, $(SNET_SRCS_C:.c=.o)) \
 	$(addprefix $(BUILD_DIR)/vendor/, $(STM_SRCS_C:.c=.o)) \
 	$(addprefix $(BUILD_DIR)/vendor/, $(STM_SRCS_S:.s=.o))
 
-
+DEPS = $(addprefix $(BUILD_DIR)/src/, $(SRCS_C:.c=.d)) \
+	$(addprefix $(BUILD_DIR)/snet/, $(SNET_SRCS_C:.c=.d)) \
+	$(addprefix $(BUILD_DIR)/vendor/, $(STM_SRCS_C:.c=.d))
 #
 # Build rules
 #
-.PHONY: all clean prog
+.PHONY: all clean flash
 
 all: $(BUILD_DIR)/$(TARGET).elf
 
+-include $(DEPS)
 $(BUILD_DIR)/src/%.o: src/%.c
 	$(MKDIR) -p $(dir $@)
 	$(CC) $< $(CFLAGS) $(CFLAGS_WARN) -c -o $@
@@ -108,10 +112,12 @@ $(BUILD_DIR)/src/%.o: src/%.s
 
 # TODO: We'll move this out too. We want SNet to build itself and then link into
 # the example!
+-include $(DEPS)
 $(BUILD_DIR)/snet/%.o: $(SNET_DIR)/%.c
 	$(MKDIR) -p $(dir $@)
 	$(CC) $< $(CFLAGS) -D__FILENAME__=\"$(subst $(SNET_DIR)/,,$<)\" -c -o $@
 
+-include $(DEPS)
 $(BUILD_DIR)/vendor/%.o: $(STM_DIR)/%.c
 	$(MKDIR) -p $(dir $@)
 	$(CC) $< $(CFLAGS) -c -o $@
@@ -127,10 +133,16 @@ $(BUILD_DIR)/$(TARGET).elf: $(OBJS)
 	$(MKDIR) -p $(dir $@)
 	$(CC) $^ $(CFLAGS) $(LFLAGS) -o $@
 	$(SIZE) $@
+	$(OBJCOPY) -O binary $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).bin
+
 
 clean:
 	rm -rf $(BUILD_DIR)
 
+
+flash: $(BUILD_DIR)/$(TARGET).elf
+	st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
+	st-flash reset
 
 #
 # TOOLCHAIN

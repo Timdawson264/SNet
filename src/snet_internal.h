@@ -3,7 +3,7 @@
 
 #include "util/ringbuf.h"
 #include "util/crc32.h"
-
+#include "util/endian.h"
 
 #ifdef SNET_DEBUG
 #define DEBUG(...)                                      \
@@ -23,6 +23,13 @@ typedef enum
 
 } SNET_PKT_FLAG;
 
+//Pack struct for with GCC
+#ifdef __GNUC__ 
+	#define PKATTR __attribute__((packed)) 
+#else
+	#define PKATTR
+#endif
+
 typedef struct
 {
 	uint8_t preamble; /* 0xAA */
@@ -31,7 +38,7 @@ typedef struct
     uint8_t flags; /* feature flats, REQACK,ACK,Jumbo Frame,CRC  */
     uint8_t data_length;
     uint8_t header_check; /* sum of header bytes MOD 255 of all previouse fields */    
-} snet_pkt_header;
+} PKATTR snet_pkt_header;
 
 typedef struct 
 {
@@ -82,5 +89,9 @@ typedef struct
 	/* Used for collition avoidance */
 	uint8_t random;
 } snet_stack_ctx;
+
+
+
+
 
 #endif

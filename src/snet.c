@@ -1,11 +1,13 @@
+
 #include "snet.h"
-#include "rand.h"
+#include "util/rand.h"
+#include "util/endian.h"
 
 //#define SNET_DEBUG
 #include "snet_internal.h"
 
 #ifndef DEVICE_ADDR
-	#define DEVICE_ADDR 0x0001
+	#define DEVICE_ADDR 0x0508
 #endif
 	
 
@@ -31,6 +33,23 @@ static snet_stack_ctx stack_ctx = {
 
 //https://en.wikipedia.org/wiki/Carrier-sense_multiple_access
 //Below TX state machine implements Non-persistent type
+
+#if  __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+
+void
+snet_pkt_hdr_endian_swap( snet_pkt_header *pkt_header )
+{
+	pkt_header->dst_addr = __bswap16( pkt_header->dst_addr ); 
+    pkt_header->src_addr = __bswap16( pkt_header->src_addr );
+}
+
+#else
+
+#define snet_pkt_hdr_endian_swap( P ) (void) P
+
+#endif
+
+
 
 void
 snet_init(void)
@@ -62,11 +81,13 @@ _snet_update(void)
 		/* Check if Bus is IDLE, if not we must wait a random delay */
 		case SNET_TX_PREP:
 		{
+			DEBUG("STATE: TX_PREP\n");
+
 			/* Even if the Systick rolls over, the difference is unsigned
 			   so will return true and progress.
 			*/
 			uint16_t idle_time = SNET_PKT_CA_TIME( stack_ctx.tx_pkt.priority & 0x0F );
-			uint32_t time_since_bytes = snet_hal_get_ticks() - stack_ctx.last_rx_tick;
+			uint16_t time_since_bytes = snet_hal_get_ticks() - stack_ctx.last_rx_tick;
 			if( time_since_bytes >= idle_time )
 			{
 				// Bus idle TX now.
@@ -88,10 +109,11 @@ _snet_update(void)
 		/* Waiting for random time before attempting to TX */
 		case SNET_TX_BUS_WAIT:
 		{
+			DEBUG("STATE: TX_BUS_WAIT\n");
 			//DO collision avoidance random wait here, polled...
-			uint32_t wait_time = stack_ctx.random;
+			uint16_t wait_time = stack_ctx.random;
 			/* This is the Time since we last tried to TX but found a busy bus */
-			uint32_t time_since_prep = snet_hal_get_ticks() - stack_ctx.tx_tick;
+			uint16_t time_since_prep = snet_hal_get_ticks() - stack_ctx.tx_tick;
 			
 			if( time_since_prep >= wait_time )
 			{
@@ -102,8 +124,11 @@ _snet_update(void)
 		}
 		case SNET_TX_TRANSMIT_START:
 		{
+			DEBUG("STATE: TX_TRANSMIT_START\n");
 			snet_hal_set_direction( SNET_HAL_DIR_TX );
+
 			//TODO: Switch to iovec and async
+			snet_pkt_hdr_endian_swap( &stack_ctx.tx_pkt.header );
 			snet_hal_transmit( (uint8_t*)&stack_ctx.tx_pkt.header, SNET_PKT_HEADER_LEN );
 			snet_hal_transmit( stack_ctx.tx_pkt.data, stack_ctx.tx_pkt.header.data_length );
 			if( stack_ctx.tx_pkt.header.flags & SNET_PKT_FLAG_CRC )
@@ -117,6 +142,7 @@ _snet_update(void)
 		}
 		case SNET_TX_TRANSMITTING:
 		{
+			DEBUG("STATE: TX_TRANSMITTING\n");
 			//Micro is still sending data
 			if( snet_hal_is_transmitting() ) break;
 
@@ -140,6 +166,7 @@ _snet_update(void)
 		}
 		case SNET_TX_ACK_WAIT:
 		{	
+			DEBUG("STATE: TX_ACK_WAIT\n");
 			uint32_t time_since_tx = snet_hal_get_ticks() - stack_ctx.tx_tick;
 			if( time_since_tx > SNET_ACK_TIMEOUT )
 			{
@@ -182,7 +209,7 @@ _snet_update(void)
 void 
 snet_calc_header_checksum( snet_pkt_header *pkt_header )
 {
-	pkt_header->header_check = 0;	
+	pkt_header->header_check = 0; //zero checksum field	
 	uint8_t * header = (uint8_t*)pkt_header;
 
 	uint8_t result = 0;

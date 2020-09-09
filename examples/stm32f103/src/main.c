@@ -30,26 +30,46 @@ main(void)
 
     snet_init();
 
-    int count = 0;
-    uint8_t buf[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+    //int count = 0;
+    //uint8_t buf[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
 
-    while (1)
-    {
+    // while (1)
+    // {
+    //     snet_update();
+
+    //     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+    //     HAL_Delay(200);
+
+    //     if (count == 0)
+    //     {
+    //         snet_send(NULL, 0, 2, false, true, 1 );
+    //         count = 10;
+    //     }
+    //     else
+    //     {
+    //         count--;
+    //     }
+    // }
+
+
+
+    //uint32_t loop_LED = 0;
+    
+	while(1)
+	{
+        //uint32_t loop_ms = systick_epoch_ms();
         snet_update();
 
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-        HAL_Delay(200);
-
-        if (count == 0)
-        {
-            snet_send(buf, sizeof(buf), 2, false, true );
-            count = 10;
-        }
-        else
-        {
-            count--;
-        }
-    }
+        // if( loop_ms - loop_LED > 100 )
+        // {
+            if( snet_send( NULL, 0, 0xABCD, false, false, 1 ) )
+            {
+                //poll this untill send every x ms
+                // loop_LED = loop_ms; 
+                HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+            }
+        // }
+	}
 }
 
 

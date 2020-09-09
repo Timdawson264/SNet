@@ -35,14 +35,7 @@ void snet_hal_transmit(uint8_t *data, uint16_t length)
 
 bool snet_hal_is_transmitting(void)
 {
-    if( ( UART1->SR & ( UART1_SR_TXE | UART1_SR_TC ) ) == 0 )
-    {   
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return( ( UART1->SR & UART1_SR_TC ) == 0 );
 }
 
 void snet_hal_set_direction(snet_hal_direction_t direction)

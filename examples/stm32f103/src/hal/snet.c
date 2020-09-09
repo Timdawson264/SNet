@@ -1,9 +1,9 @@
-#include "snet.h"
+#include "snet_hal.h"
 #include "stm32f1xx_hal.h"
 
 
-#define RX_ENABLE_PIN (GPIO_PIN_11)
-#define TX_ENABLE_PIN (GPIO_PIN_12)
+#define TXRX_ENABLE_PIN (GPIO_PIN_8)
+//#define TX_ENABLE_PIN (GPIO_PIN_12)
 
 
 static UART_HandleTypeDef huart;
@@ -15,12 +15,11 @@ snet_hal_init(void)
     GPIO_InitTypeDef gpio;
 
     /* Direction pins. */
-    gpio.Pin = GPIO_PIN_11 | GPIO_PIN_12;
+    //gpio.Pin = GPIO_PIN_11 | GPIO_PIN_12;
+    gpio.Pin = TXRX_ENABLE_PIN;
     gpio.Mode = GPIO_MODE_OUTPUT_PP;
     gpio.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOA, &gpio);
-
-    snet_hal_set_direction(SNET_HAL_DIR_IDLE);
 
     /* UART peripheral. */
     huart.Instance = USART1;
@@ -45,43 +44,44 @@ snet_hal_transmit(uint8_t *data, uint16_t length)
 
     for (i = 0; i < length; i++)
     {
-        while (!(huart.Instance->SR & UART_FLAG_TXE))
-            ;
-
+        //Make sure DR is empty before writing to it.
+        while( (  huart.Instance->SR & UART_FLAG_TXE ) == 0);
         huart.Instance->DR = data[i];
     }
 }
 
-
 bool
 snet_hal_is_transmitting(void)
 {
-    return !(huart.Instance->SR & UART_FLAG_TXE);
+    return ( ( huart.Instance->SR & UART_FLAG_TC ) == 0 );
 }
-
 
 void
 snet_hal_set_direction(snet_hal_direction_t direction)
 {
     switch (direction)
     {
-    case SNET_HAL_DIR_IDLE:
-        HAL_GPIO_WritePin(GPIOA, RX_ENABLE_PIN, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOA, TX_ENABLE_PIN, GPIO_PIN_RESET);
-        break;
-
     case SNET_HAL_DIR_TX:
-        HAL_GPIO_WritePin(GPIOA, RX_ENABLE_PIN, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIOA, TX_ENABLE_PIN, GPIO_PIN_SET);
+        //HAL_GPIO_WritePin(GPIOA, RX_ENABLE_PIN, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOA, TXRX_ENABLE_PIN, GPIO_PIN_SET);
         break;
 
+    case SNET_HAL_DIR_IDLE:
+        //HAL_GPIO_WritePin(GPIOA, RX_ENABLE_PIN, GPIO_PIN_SET);
+        //HAL_GPIO_WritePin(GPIOA, TX_ENABLE_PIN, GPIO_PIN_RESET);
+        //break;
     case SNET_HAL_DIR_RX:
-        HAL_GPIO_WritePin(GPIOA, RX_ENABLE_PIN, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(GPIOA, TX_ENABLE_PIN, GPIO_PIN_RESET);
+        //HAL_GPIO_WritePin(GPIOA, RX_ENABLE_PIN, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOA, TXRX_ENABLE_PIN, GPIO_PIN_RESET);
         break;
     }
 }
 
+uint32_t
+snet_hal_get_ticks()
+{
+    return HAL_GetTick();
+}
 
 void
 USART1_IRQHandler(void)

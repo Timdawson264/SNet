@@ -39,7 +39,7 @@ void main()
     enableInterrupts();
     
     uint32_t loop_LED = 0;
-    
+
 	while(1)
 	{
         uint32_t loop_ms = systick_epoch_ms();
@@ -47,7 +47,7 @@ void main()
 
         // if( loop_ms - loop_LED > 100 )
         // {
-            if( snet_send( NULL, 0, 0xFFFF, false, false, 1 ) )
+            if( snet_send( NULL, 0, 0xABCD, false, false, 1 ) )
             {
                 //poll this untill send every x ms
                 // loop_LED = loop_ms; 
