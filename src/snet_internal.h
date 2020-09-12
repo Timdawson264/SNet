@@ -1,9 +1,8 @@
 #ifndef SNET_INTERNAL_H__
 #define SNET_INTERNAL_H__
 
-#include "util/ringbuf.h"
+#include "lwrb/lwrb/src/include/lwrb/lwrb.h"
 #include "util/crc32.h"
-#include "util/endian.h"
 
 #ifdef SNET_DEBUG
 #define DEBUG(...)                                      \
@@ -76,7 +75,7 @@ typedef struct
 
     RX_STATE rx_state;    
     snet_pkt rx_pkt;
-    ringbuf_t rx_rb; /* Async RX */
+    lwrb_t rx_rb; /* Async RX */
 	/* This tracks the last time bytes were recived on the bus */	
 	volatile uint32_t last_rx_tick;
 
@@ -89,9 +88,6 @@ typedef struct
 	/* Used for collition avoidance */
 	uint8_t random;
 } snet_stack_ctx;
-
-
-
 
 
 #endif

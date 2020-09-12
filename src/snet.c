@@ -58,7 +58,7 @@ snet_init(void)
 
 	//TODO: Compile time assert
 	//assert( sizeof( rx_buf ) > SNET_HEADER_LEN );
-    ringbuf_init(&stack_ctx.rx_rb, rx_buf, sizeof(rx_buf));
+	lwrb_init( &stack_ctx.rx_rb, rx_buf, sizeof(rx_buf) );
 
 	/* Using the ADDR as the Rand seed should help stop collisions */
 	rand_init( (uint32_t)stack_ctx.ADDR );
@@ -67,8 +67,8 @@ snet_init(void)
 	snet_hal_set_direction(SNET_HAL_DIR_RX);
 }
 
-bool
-_snet_update(void)
+void
+snet_update(void)
 {	
 	switch( stack_ctx.tx_state )
 	{
@@ -95,9 +95,9 @@ _snet_update(void)
 			}
 			else
 			{
-			// 	//Bus not Idle Wait Random Time
-			// 	//Select A random time now. so we can poll wait in next state.
-			// 	//0-128 bytes random wait ~0-16ms
+				//Bus not Idle Wait Random Time
+				//Select A random time now. so we can poll wait in next state.
+				//random wait ~0-16ms
 				stack_ctx.random = (uint8_t) rand_val() & 0x0F;
 				//Record the time now. so we can calculate when random wait is over.
 				stack_ctx.tx_tick = snet_hal_get_ticks();
@@ -177,33 +177,31 @@ _snet_update(void)
 	}
 
 
-	// switch( stack_ctx.rx_state )
-	// {
-	// 	case SNET_RX_IDLE:
-	// 	{
-	// 		break;
-	// 	}
-	// 	case SNET_RX_HEADER:
-	// 	{
-	// 		break;
-	// 	}
-	// 	case SNET_RX_DATA:
-	// 	{
-	// 		break;
-	// 	}
-	// 	case SNET_RX_FINAL:
-	// 	{
-	// 		break;
-	// 	}
-	// }
+	switch( stack_ctx.rx_state )
+	{
+		// case SNET_RX_IDLE:
+		// {
+		// 	break;
+		// }
+		// case SNET_RX_HEADER:
+		// {
+		// 	break;
+		// }
+		// case SNET_RX_DATA:
+		// {
+		// 	break;
+		// }
+		// case SNET_RX_FINAL:
+		// {
+		// 	break;
+		// }
+	}
 
     /* Process any received data. */
     //~ while (ringbuf_pop(&stack_ctx.rx_rb, &ch))
     //~ {
         //~ DEBUG("%02x\n", ch);
     //~ }
-
-	return false;
 }
 
 void 
@@ -220,16 +218,6 @@ snet_calc_header_checksum( snet_pkt_header *pkt_header )
 
 	pkt_header->header_check = result;
 }
-
-void
-snet_update(void)
-{
-	//uint8_t i;
-	//for( i=0; i < 4 && _snet_update() ; i++ );
-
-	_snet_update();
-}
-
 
 bool
 snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool crc, uint8_t priority )
@@ -285,6 +273,6 @@ void
 snet_hal_receive_byte(uint8_t data)
 {
 	(void) data;
- 	stack_ctx.last_rx_tick = snet_hal_get_ticks();
-	//ringbuf_push(&stack_ctx.rx_rb, data);   
+ 	stack_ctx.last_rx_tick = snet_hal_get_ticks();  
+	lwrb_write( &stack_ctx.rx_rb, &data, 1 );
 }

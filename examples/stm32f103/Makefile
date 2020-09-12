@@ -23,10 +23,10 @@ SNET_SRCS_C = \
     src/snet.c \
     src/util/crc32.c \
     src/util/printf.c \
-    src/util/ringbuf.c \
-	src/util/rand.c
+    src/util/rand.c \
+    src/lwrb/lwrb/src/lwrb/lwrb.c
 
-SNET_INCLUDE = src src/util
+SNET_INCLUDE = src src/util src/lwrb/lwrb/src/include
 
 INCLUDE += $(addprefix $(SNET_DIR)/, $(SNET_INCLUDE))
 

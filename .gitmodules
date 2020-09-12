@@ -1,0 +1,3 @@
+[submodule "src/lwrb"]
+	path = src/lwrb
+	url = git@github.com:MaJerle/lwrb.git
