@@ -6,6 +6,7 @@ TARGET = stm32f103
 
 SRCS_C = \
     main.c \
+	led.c \
     hal/debug.c \
     hal/snet.c
 
