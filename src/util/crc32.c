@@ -23,3 +23,6 @@ const uint32_t Polynomial = 0xEDB88320;
   return ~crc; // same as crc ^ 0xFFFFFFFF
 }
 
+
+//TODO: calculate crc progressivly and so we dont have to do all work in one call.
+

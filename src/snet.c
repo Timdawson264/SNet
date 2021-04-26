@@ -11,11 +11,13 @@
 #endif
 	
 
-static uint8_t rx_buf[64];
+static uint8_t rx_buf[SNET_PKT_HEADER_LEN*2]; //should be atleast SNET_PKT_HEADER_LEN size
 static snet_stack_ctx stack_ctx = {
 	.ADDR = DEVICE_ADDR,
 	.tx_tick = 0,
-	.last_rx_tick = 0
+	.last_rx_tick = 0,
+	.rx_state = SNET_RX_PREAMBLE,
+	.tx_state = SNET_TX_IDLE,
 };
 
 /* BUS Timmings */
@@ -27,9 +29,12 @@ static snet_stack_ctx stack_ctx = {
 
 //Time before we resend after waiting for an ACK 
 //#define SNET_ACK_TIMEOUT ((uint32_t) SNET_PKT_HEADER_TIME * 2 )
-#define SNET_ACK_TIMEOUT 1
+#define SNET_ACK_TIMEOUT (1)
 //Time to wait after bus idle before packet send.
 #define SNET_PKT_CA_TIME(N) ( SNET_ACK_TIMEOUT * ( 1 + (N) ) )
+
+//Timeout between preamble and rest of header
+#define SNET_RX_TIMEOUT (2)
 
 //https://en.wikipedia.org/wiki/Carrier-sense_multiple_access
 //Below TX state machine implements Non-persistent type
@@ -70,14 +75,13 @@ snet_init(void)
 void
 snet_update(void)
 {	
-	switch( stack_ctx.tx_state )
+	switch( (stack_ctx.tx_state) )
 	{
-		// case SNET_TX_IDLE: 
-		// {
-		// 	(void) stack_ctx;	
-		// 	break;
-		// }
-		
+		/* Do nothing we have no TX work todo */
+		case SNET_TX_IDLE: 
+		{	
+			break;
+		}
 		/* Check if Bus is IDLE, if not we must wait a random delay */
 		case SNET_TX_PREP:
 		{
@@ -85,6 +89,7 @@ snet_update(void)
 
 			/* Even if the Systick rolls over, the difference is unsigned
 			   so will return true and progress.
+			   TODO: replace this random backoff send with a probabilistic one.
 			*/
 			uint16_t idle_time = SNET_PKT_CA_TIME( stack_ctx.tx_pkt.priority & 0x0F );
 			uint16_t time_since_bytes = snet_hal_get_ticks() - stack_ctx.last_rx_tick;
@@ -168,7 +173,7 @@ snet_update(void)
 		{	
 			DEBUG("STATE: TX_ACK_WAIT\n");
 			uint32_t time_since_tx = snet_hal_get_ticks() - stack_ctx.tx_tick;
-			if( time_since_tx > SNET_ACK_TIMEOUT )
+			if( (time_since_tx > SNET_ACK_TIMEOUT) )
 			{
 				stack_ctx.tx_state = SNET_TX_PREP; //resend
 			}
@@ -183,18 +188,79 @@ snet_update(void)
 		// {
 		// 	break;
 		// }
-		// case SNET_RX_HEADER:
-		// {
-		// 	break;
-		// }
-		// case SNET_RX_DATA:
-		// {
-		// 	break;
-		// }
-		// case SNET_RX_FINAL:
-		// {
-		// 	break;
-		// }
+		case SNET_RX_PREAMBLE:
+		{
+			//while we are in this state and there is bytes to check.
+			while( (stack_ctx.rx_state == SNET_RX_HEADER) && ( lwrb_get_full( &stack_ctx.rx_rb ) > 0 ) )
+			{  
+				//look for 0xAA start of header.
+				//if not 0xAA consume.
+				uint8_t* buf_ptr = lwrb_get_linear_block_read_address( &stack_ctx.rx_rb );
+				size_t buf_len = lwrb_get_linear_block_read_length( &stack_ctx.rx_rb );
+				size_t skip_len = 0;
+
+				for (size_t i = 0; i < buf_len; i++)
+				{
+					if( buf_ptr[i] == 0xAA )
+					{
+						//start checking for real header now
+						stack_ctx.rx_state == SNET_RX_HEADER; 
+						break;
+					}
+					skip_len++; //skip all non preamble bytes
+				}
+
+				lwrb_skip(&stack_ctx.rx_rb, skip_len);	
+			}
+
+			break;
+		}
+		case SNET_RX_HEADER:
+		{
+			//see if we have a full header worth of data.
+			if (lwrb_get_full(&stack_ctx.rx_rb) < SNET_PKT_HEADER_LEN)
+			{
+				//lets not wait forever
+				uint32_t timeout = snet_hal_get_ticks() - stack_ctx.last_rx_tick;
+				if ( timeout > SNET_RX_TIMEOUT )
+				{
+					stack_ctx.rx_state = SNET_RX_PREAMBLE;
+				}
+				break;
+			}
+
+			lwrb_read(&stack_ctx.rx_rb, (void *)&stack_ctx.rx_pkt.header, SNET_PKT_HEADER_LEN);
+			uint8_t check = snet_calc_header_checksum( &stack_ctx.rx_pkt.header );
+			snet_pkt_hdr_endian_swap( &stack_ctx.rx_pkt.header );
+			
+			if(  check != stack_ctx.rx_pkt.header.header_check )
+			{
+				//No good try again.
+				stack_ctx.rx_state = SNET_RX_PREAMBLE;
+				break;
+			}
+			else
+			{
+				//now get the data
+				stack_ctx.data_length_remaining = stack_ctx.rx_pkt.header.data_length;
+				stack_ctx.rx_state = SNET_RX_DATA;
+			}
+		}
+		case SNET_RX_DATA:
+		{
+			//rx the data portion of the packet + maybe a crc
+			//stack_ctx.data_length_remaining
+
+			break;
+		}
+		case SNET_RX_FINAL:
+		{
+			//Check optional CRC if its there.
+			//Queue optional ACK
+			//handoff packet.
+
+			break;
+		}
 	}
 
     /* Process any received data. */
@@ -204,11 +270,11 @@ snet_update(void)
     //~ }
 }
 
-void 
+uint8_t 
 snet_calc_header_checksum( snet_pkt_header *pkt_header )
 {
-	pkt_header->header_check = 0; //zero checksum field	
-	uint8_t * header = (uint8_t*)pkt_header;
+	uint8_t old_res = pkt_header->header_check;
+	uint8_t *header = (uint8_t *)pkt_header;
 
 	uint8_t result = 0;
 	for( size_t i=0; i<SNET_PKT_HEADER_LEN; i++)
@@ -216,7 +282,8 @@ snet_calc_header_checksum( snet_pkt_header *pkt_header )
 		result = ( result + header[i] ) & 0xff ;
 	}
 
-	pkt_header->header_check = result;
+	pkt_header->header_check = old_res;
+	return result;
 }
 
 bool
@@ -226,6 +293,9 @@ snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool
 			return false;
 			
 	stack_ctx.tx_pkt.priority = priority;
+
+	//this kinda sucks... need to use a nice serialization library.
+
 	//Reset header
 	memset( (void*) &stack_ctx.tx_pkt.header, 0, SNET_PKT_HEADER_LEN );
 	stack_ctx.tx_pkt.header.preamble = 0xAA;
@@ -245,7 +315,7 @@ snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool
 		stack_ctx.tx_pkt.crc = snet_crc32_bitwise( data, length );
 	}
 	
-	snet_calc_header_checksum( &stack_ctx.tx_pkt.header );
+	stack_ctx.tx_pkt.header.header_check = snet_calc_header_checksum( &stack_ctx.tx_pkt.header );
 
 	//Start the TX chain of events
 	stack_ctx.tx_state = SNET_TX_PREP;
@@ -257,22 +327,12 @@ snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool
 void
 snet_hal_receive(uint8_t *data, uint16_t length)
 {
-	(void) data;
-	(void) length;
-    //int i;
-	
 	stack_ctx.last_rx_tick = snet_hal_get_ticks();
-
-    // for (i = 0; i < length; i++)
-    // {
-    //     ringbuf_push(&stack_ctx.rx_rb, data[i]);
-    // }
+	lwrb_write( &stack_ctx.rx_rb, data, length);
 }
 
 void
 snet_hal_receive_byte(uint8_t data)
 {
-	(void) data;
- 	stack_ctx.last_rx_tick = snet_hal_get_ticks();  
-	lwrb_write( &stack_ctx.rx_rb, &data, 1 );
+	snet_hal_receive( &data, 1 );
 }

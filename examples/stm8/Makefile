@@ -100,7 +100,7 @@ flash: $(BUILD_DIR)/$(TARGET).ihx
 #
 # TOOLCHAIN
 #
-CC=~/Downloads/sdcc-4.0.0/bin/sdcc
-AR=~/Downloads/sdcc-4.0.0/bin/sdar
-OBJCOPY=~/Downloads/sdcc-4.0.0/bin/sdobjcopy
+CC=~/Downloads/sdcc-4.1.0/bin/sdcc
+AR=~/Downloads/sdcc-4.1.0/bin/sdar
+OBJCOPY=~/Downloads/sdcc-4.1.0/bin/sdobjcopy
 MKDIR=mkdir

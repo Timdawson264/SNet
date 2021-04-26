@@ -5,10 +5,10 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-
 /** Bus symbol rate in bits-per-second. */
 #define SNET_HAL_BAUDRATE (50000)
-
+/** Bus max packet size for this device */
+#define SNET_HAL_MTU (64)
 
 /**
  * The different states the bus can be in hardware.
@@ -100,7 +100,7 @@ snet_hal_set_direction(snet_hal_direction_t direction);
  * Implemented by the HAL layer return a systick type monotonic clock
  * 
  * @note can be called from IRQ ctx should return microseconds. 
- * @returns milliseconds since boot.
+ * @returns microseconds since boot.
  */
 uint32_t 
 snet_hal_get_ticks();

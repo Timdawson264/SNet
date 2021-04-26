@@ -14,6 +14,8 @@
 #define DEBUG(...)
 #endif
 
+
+
 typedef enum
 {
 	SNET_PKT_FLAG_REQACK = (1<<0), /* Please Send an Ack packet back. */
@@ -29,9 +31,11 @@ typedef enum
 	#define PKATTR
 #endif
 
+
+
 typedef struct
 {
-	uint8_t preamble; /* 0xAA */
+    uint8_t preamble; /* 0xAA */
     uint16_t dst_addr; 
     uint16_t src_addr;
     uint8_t flags; /* feature flats, REQACK,ACK,Jumbo Frame,CRC  */
@@ -63,8 +67,9 @@ typedef enum
 typedef enum
 {
 	SNET_RX_IDLE,  /* RX is Disabled */
+	SNET_RX_PREAMBLE, /* RX 0xAA */
 	SNET_RX_HEADER, /* Looking for a valid packet header */
-	SNET_RX_DATA, /* Copying databytes and calculating CRC */
+	SNET_RX_DATA, /* Copying data bytes and calculating CRC */
 	SNET_RX_FINAL /* Header and Data Assembled, Just need to call CBs etc. */
 } RX_STATE;
 
@@ -73,9 +78,11 @@ typedef struct
 	/* Address of this node */
 	const uint16_t ADDR;
 
-    RX_STATE rx_state;    
+    RX_STATE rx_state;
     snet_pkt rx_pkt;
-    lwrb_t rx_rb; /* Async RX */
+    lwrb_t rx_rb; /* Async RX ringbuffer irq -> update loop */
+	uint8_t data_length_remaining;
+
 	/* This tracks the last time bytes were recived on the bus */	
 	volatile uint32_t last_rx_tick;
 
@@ -85,9 +92,11 @@ typedef struct
 	/* This is also used for random waiting on TX wait state */
 	uint32_t tx_tick;
 
-	/* Used for collition avoidance */
+	/* Used for tx collition avoidance */
 	uint8_t random;
 } snet_stack_ctx;
 
+uint8_t
+snet_calc_header_checksum(snet_pkt_header *pkt_header);
 
 #endif

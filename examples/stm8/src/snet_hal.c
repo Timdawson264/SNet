@@ -26,6 +26,8 @@ void snet_hal_init(void)
 
 void snet_hal_transmit(uint8_t *data, uint16_t length)
 {
+    //ATM this is just a blocking send. 
+    //TODO: impl optional async TX (IRQ based).
     while( length-- )
     {
         UART1->DR = *data++;
@@ -57,9 +59,10 @@ uint32_t snet_hal_get_ticks()
     return systick_epoch_ms();
 }
 
+//IRQ for this port.
 void UART1_TX_IRQHandler(void) __interrupt(17)
 {
-
+    //TODO: impl async TX.
 }
 
 void UART1_RX_IRQHandler(void) __interrupt(18)

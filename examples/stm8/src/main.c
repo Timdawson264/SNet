@@ -13,7 +13,7 @@ void InitialiseSystemClock()
     CLK->ICKR = 0;                       //  Reset the Internal Clock Register.
     CLK->ICKR |= CLK_ICKR_HSIEN;          //  Enable the HSI.
     CLK->ECKR = 0;                       //  Disable the external clock.
-    while (CLK->ICKR & CLK_FLAG_HSIRDY == 0);       //  Wait for the HSI to be ready for use.
+    while ((CLK->ICKR & CLK_FLAG_HSIRDY) == 0);       //  Wait for the HSI to be ready for use.
     CLK->CKDIVR = 0;                     //  Ensure the clocks are running at full speed.
     CLK->PCKENR1 = 0xff;                 //  Enable all peripheral clocks.
     CLK->PCKENR2 = 0xff;                 //  Ditto.
