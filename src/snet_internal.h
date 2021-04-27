@@ -14,7 +14,8 @@
 #define DEBUG(...)
 #endif
 
-
+/** Bus max packet size for this device */
+#define SNET_HAL_MTU (64)
 
 typedef enum
 {
@@ -31,7 +32,7 @@ typedef enum
 	#define PKATTR
 #endif
 
-
+#define MIN(X,Y) ( (X) < (Y) ? (X) : (Y) )
 
 typedef struct
 {
@@ -46,8 +47,9 @@ typedef struct
 typedef struct 
 {
 	snet_pkt_header header;
+	
 	/* if header.data_length = 0 then below is not TXed */
-	uint8_t* data; /* header.data_length octets */
+	uint8_t data [SNET_HAL_MTU]; /* header.data_length octets */
 	uint32_t crc; /* Send if SNET_PKT_FLAG_CRC is set. */
 	uint8_t priority; /* 0 - 7, default is 4, ACK is 0. TX Collision avoid multiplier. */ 
 } snet_pkt;

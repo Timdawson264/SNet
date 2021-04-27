@@ -45,15 +45,15 @@ void main()
         uint32_t loop_ms = systick_epoch_ms();
         snet_update();
 
-        // if( loop_ms - loop_LED > 100 )
-        // {
-            if( snet_send( NULL, 0, 0xABCD, false, false, 1 ) )
+        if( loop_ms - loop_LED > 500 )
+        {
+            if( snet_send( "Hello\n", 6, 0xFFFF, false, true, 1 ) )
             {
                 //poll this untill send every x ms
-                // loop_LED = loop_ms; 
+                loop_LED = loop_ms; 
                 GPIO_WriteReverse( GPIOB, GPIO_PIN_5 );
             }
-        // }
+        }
 	}
 }
 

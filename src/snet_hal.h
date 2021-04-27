@@ -7,8 +7,6 @@
 
 /** Bus symbol rate in bits-per-second. */
 #define SNET_HAL_BAUDRATE (50000)
-/** Bus max packet size for this device */
-#define SNET_HAL_MTU (64)
 
 /**
  * The different states the bus can be in hardware.

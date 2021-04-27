@@ -34,7 +34,7 @@ static snet_stack_ctx stack_ctx = {
 #define SNET_PKT_CA_TIME(N) ( SNET_ACK_TIMEOUT * ( 1 + (N) ) )
 
 //Timeout between preamble and rest of header
-#define SNET_RX_TIMEOUT (2)
+#define SNET_RX_TIMEOUT (100)
 
 //https://en.wikipedia.org/wiki/Carrier-sense_multiple_access
 //Below TX state machine implements Non-persistent type
@@ -59,7 +59,7 @@ snet_pkt_hdr_endian_swap( snet_pkt_header *pkt_header )
 void
 snet_init(void)
 {
-    DEBUG("init\n");
+    DEBUG("init\n PKT_HDR_LEN: %u\n\n", SNET_PKT_HEADER_LEN);
 
 	//TODO: Compile time assert
 	//assert( sizeof( rx_buf ) > SNET_HEADER_LEN );
@@ -190,8 +190,16 @@ snet_update(void)
 		// }
 		case SNET_RX_PREAMBLE:
 		{
+			DEBUG("STATE: SNET_RX_PREAMBLE\n");
+
+			size_t rx_len = lwrb_get_full(&stack_ctx.rx_rb);
+			if (rx_len>0)
+			{
+				DEBUG("RECV: %i Bytes\n", rx_len);
+			}
+
 			//while we are in this state and there is bytes to check.
-			while( (stack_ctx.rx_state == SNET_RX_HEADER) && ( lwrb_get_full( &stack_ctx.rx_rb ) > 0 ) )
+			while( (stack_ctx.rx_state == SNET_RX_PREAMBLE) && ( lwrb_get_full( &stack_ctx.rx_rb ) > 0 ) )
 			{  
 				//look for 0xAA start of header.
 				//if not 0xAA consume.
@@ -201,22 +209,23 @@ snet_update(void)
 
 				for (size_t i = 0; i < buf_len; i++)
 				{
-					if( buf_ptr[i] == 0xAA )
+					if (buf_ptr[i] == 0xAA)
 					{
 						//start checking for real header now
-						stack_ctx.rx_state == SNET_RX_HEADER; 
+						stack_ctx.rx_state = SNET_RX_HEADER;
 						break;
 					}
 					skip_len++; //skip all non preamble bytes
 				}
-
-				lwrb_skip(&stack_ctx.rx_rb, skip_len);	
+				DEBUG("SKIP\n");
+				lwrb_skip(&stack_ctx.rx_rb, skip_len);
 			}
 
 			break;
 		}
 		case SNET_RX_HEADER:
 		{
+			DEBUG("STATE: SNET_RX_HEADER\n");
 			//see if we have a full header worth of data.
 			if (lwrb_get_full(&stack_ctx.rx_rb) < SNET_PKT_HEADER_LEN)
 			{
@@ -232,29 +241,69 @@ snet_update(void)
 			lwrb_read(&stack_ctx.rx_rb, (void *)&stack_ctx.rx_pkt.header, SNET_PKT_HEADER_LEN);
 			uint8_t check = snet_calc_header_checksum( &stack_ctx.rx_pkt.header );
 			snet_pkt_hdr_endian_swap( &stack_ctx.rx_pkt.header );
-			
+
+			snet_pkt_header *hdr = &stack_ctx.rx_pkt.header;
+			DEBUG("HDR:\n DST %u\n SRC: %u\n LEN: %u\n CHK: %u\n\n", hdr->dst_addr, hdr->src_addr, hdr->data_length, hdr->header_check);
+
 			if(  check != stack_ctx.rx_pkt.header.header_check )
 			{
 				//No good try again.
+				DEBUG("BAD HEADER CHECK: %u\n", check );
 				stack_ctx.rx_state = SNET_RX_PREAMBLE;
 				break;
 			}
 			else
 			{
-				//now get the data
+				//now get the data.
+				DEBUG("GOOD HEADER CHECK\n");
 				stack_ctx.data_length_remaining = stack_ctx.rx_pkt.header.data_length;
 				stack_ctx.rx_state = SNET_RX_DATA;
 			}
 		}
 		case SNET_RX_DATA:
 		{
-			//rx the data portion of the packet + maybe a crc
-			//stack_ctx.data_length_remaining
+			if( stack_ctx.data_length_remaining > 0 )
+			{
+				DEBUG("STATE: SNET_RX_DATA - DATA\n");
+				//rx the data portion of the packet + maybe a crc
+				//
+				size_t buf_s = lwrb_get_full(&stack_ctx.rx_rb);
+				size_t skip = MIN(buf_s, stack_ctx.data_length_remaining);
 
+				if( skip )
+				{
+					lwrb_advance(&stack_ctx.rx_rb, skip); //skip of data
+					stack_ctx.data_length_remaining -= skip;
+				}
+			}
+			else
+			{
+				/* Now we need to check if we need to find the CRC */
+				if( stack_ctx.rx_pkt.header.flags & SNET_PKT_FLAG_CRC != 0 )
+				{
+					if( lwrb_get_full(&stack_ctx.rx_rb) < 4 )
+					{
+						break; //crc not in ringbuf.
+					}
+					else
+					{
+						//read in CRC
+						lwrb_read(&stack_ctx.rx_rb, &stack_ctx.rx_pkt.crc, sizeof(stack_ctx.rx_pkt.crc) );
+						stack_ctx.rx_state = SNET_RX_FINAL;
+					}
+				}
+				else
+				{
+					stack_ctx.rx_state = SNET_RX_FINAL;
+				}
+			}
 			break;
 		}
 		case SNET_RX_FINAL:
 		{
+
+			stack_ctx.rx_state = SNET_RX_PREAMBLE;
+			DEBUG("STATE: SNET_RX_FINAL\n");
 			//Check optional CRC if its there.
 			//Queue optional ACK
 			//handoff packet.
@@ -273,17 +322,18 @@ snet_update(void)
 uint8_t 
 snet_calc_header_checksum( snet_pkt_header *pkt_header )
 {
-	uint8_t old_res = pkt_header->header_check;
-	uint8_t *header = (uint8_t *)pkt_header;
+	uint8_t old_chk = pkt_header->header_check;
+	pkt_header->header_check = 0;
 
-	uint8_t result = 0;
+	uint8_t *header = (uint8_t *)pkt_header;
+	uint8_t sum = 0;
 	for( size_t i=0; i<SNET_PKT_HEADER_LEN; i++)
 	{
-		result = ( result + header[i] ) & 0xff ;
+		sum += header[i];
 	}
 
-	pkt_header->header_check = old_res;
-	return result;
+	pkt_header->header_check = old_chk;
+	return sum;
 }
 
 bool
@@ -301,9 +351,9 @@ snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool
 	stack_ctx.tx_pkt.header.preamble = 0xAA;
 	stack_ctx.tx_pkt.header.dst_addr = dst_addr;
 	stack_ctx.tx_pkt.header.src_addr = stack_ctx.ADDR;
-	stack_ctx.tx_pkt.data = data;
-	stack_ctx.tx_pkt.header.data_length = length;		
-
+	stack_ctx.tx_pkt.header.data_length = length;
+	memcpy(stack_ctx.tx_pkt.data, data, length);
+	
 	if( req_ack ) 
 	{
 		stack_ctx.tx_pkt.header.flags |= SNET_PKT_FLAG_REQACK;
@@ -326,7 +376,7 @@ snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool
 
 void
 snet_hal_receive(uint8_t *data, uint16_t length)
-{
+{	
 	stack_ctx.last_rx_tick = snet_hal_get_ticks();
 	lwrb_write( &stack_ctx.rx_rb, data, length);
 }

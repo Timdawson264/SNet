@@ -39,7 +39,7 @@ STM_SRCS_C = \
 	src/stm8s_flash.c \
 	src/stm8s_tim1.c \
 	src/stm8s_tim2.c \
-	src/stm8s_tim4.c 
+	src/stm8s_tim4.c
 
 STM_INCLUDE = inc
 
@@ -48,7 +48,7 @@ INCLUDE += $(addprefix $(STM_DIR)/, $(STM_INCLUDE))
 
 CFLAGS += $(XCFLAGS)
 CFLAGS += -D$(TARGET) -mstm8
-CFLAGS += --Werror --opt-code-size -MMD
+CFLAGS += --opt-code-size -MMD
 CFLAGS += --std-sdcc99
 CFLAGS += $(addprefix -I, $(INCLUDE))
 #CFLAGS_WARN += --Werror 
@@ -91,6 +91,7 @@ $(BUILD_DIR)/$(TARGET).ihx: build/src/main.rel build/all.a
 	$(MKDIR) -p $(dir $@)
 	$(CC) $(CFLAGS) $(LFLAGS) --out-fmt-ihx -o $@ $<
 	$(CC) $(CFLAGS) $(LFLAGS) --out-fmt-elf -o $(@:.ihx=.elf) $<
+	size $(@:.ihx=.elf)
 
 flash: $(BUILD_DIR)/$(TARGET).ihx
 	stm8flash -c stlinkv2 -w $< -p stm8s103f3
