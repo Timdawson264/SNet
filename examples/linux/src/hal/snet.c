@@ -2,16 +2,13 @@
 
 #include <pthread.h>
 #include <time.h>
-
-#include <fcntl.h> // Contains file controls like O_RDWR
-#include <errno.h> // Error integer and strerror() function
-#include <termios.h> // Contains POSIX terminal control definitions
-#include <unistd.h> // write(), read(), close()
+#include <libserialport.h>
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 
-static int serial_FD = -1;
-static char *serial_file = "/dev/ttyUSB0";
+struct sp_port* serial_port;
+
+static char *serial_name = "/dev/ttyUSB0";
 
 void *rx_thread(void *vargp)
 {
@@ -20,9 +17,11 @@ void *rx_thread(void *vargp)
     char read_buf [256]; //RX buf
     while (1)
     {
-        int num_bytes = read(serial_FD, &read_buf, sizeof(read_buf));
-        if( num_bytes )
+        int num_bytes = sp_blocking_read_next(serial_port, read_buf, 256, 0 );
+        if ( num_bytes > 0 )
+        {
             snet_hal_receive((uint8_t*)read_buf, num_bytes); //pass to snet stack
+        }
 
     }
 
@@ -34,34 +33,13 @@ void *rx_thread(void *vargp)
 void
 snet_hal_init()
 {
-    //todo: make pthread - open fd
-    serial_FD = open(serial_file, O_RDWR | O_SYNC);
-
-    if (serial_FD < 0) {
-     fprintf(stderr, "Error %i from open: %s\n", errno, strerror(errno));
-    }
-
-    struct termios tty;
-    if(tcgetattr(serial_FD, &tty) != 0) {
-        fprintf(stderr, "Error %i from tcgetattr: %s\n", errno, strerror(errno));
-    }
-    tty.c_cflag = CS8;
-    //Disable char escaping and buffering
-    tty.c_lflag &= ~ICANON;
-    tty.c_lflag &= ~ECHO; // Disable echo
-    tty.c_lflag &= ~ECHOE; // Disable erasure
-    tty.c_lflag &= ~ECHONL; // Disable new-line echo
-    tty.c_lflag &= ~ISIG; // Disable interpretation of INTR, QUIT and SUSP
-    tty.c_iflag &= ~(IXON | IXOFF | IXANY); // Turn off s/w flow ctrl
-    tty.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL); // Disable any special handling of received bytes
-    tty.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
-    tty.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
-
-    tty.c_cc[VTIME] = 10;    // Wait for up to 1s (10 deciseconds), returning as soon as any data is received.
-    tty.c_cc[VMIN] = 0;
-
-    cfsetispeed(&tty, B500000);
-    cfsetospeed(&tty, B500000);
+    if( sp_get_port_by_name(serial_name, &serial_port) != SP_OK ) exit(1);
+    if( sp_open( serial_port, SP_MODE_READ_WRITE ) != SP_OK ) exit(1);
+    if( sp_set_baudrate(serial_port, SNET_HAL_BAUDRATE) != SP_OK ) exit(1);
+    if( sp_set_bits(serial_port, 8) != SP_OK ) exit(1);
+    if( sp_set_parity(serial_port, SP_PARITY_NONE) != SP_OK ) exit(1);
+    if( sp_set_stopbits(serial_port, 1) != SP_OK ) exit(1);
+    if( sp_set_flowcontrol(serial_port, SP_FLOWCONTROL_NONE) != SP_OK ) exit(1);
 
     //start RX thread
     pthread_t thread;
@@ -71,22 +49,22 @@ snet_hal_init()
 void
 snet_hal_transmit(uint8_t *data, uint16_t length)
 {
-    ssize_t s = write( serial_FD , data, length);
-    if( s < 0 )
+    enum sp_return r;
+    r = sp_blocking_write(serial_port, data, length, 1000);
+    if( r<0 )
     {
-        fprintf(stderr, "Error %i from write: %s\n", errno, strerror(errno));
-    }
-    if( s != length )
-    {
-        fprintf(stderr, "Error writing to serial port: %d\n", s);
+        exit(1);
     }
 }
 
 bool
 snet_hal_is_transmitting()
 {
-    //writes are syncrounouse O_SYNC
-    return false;
+    int r = sp_output_waiting(serial_port);
+    if( r<0 )
+        exit(1);
+
+    return (r>0);
 }
 
 void
@@ -96,12 +74,14 @@ snet_hal_set_direction(snet_hal_direction_t direction)
 	{
         case SNET_HAL_DIR_IDLE:
 		case SNET_HAL_DIR_RX:
-            //TODO: Workout what needs doing
-
+            if( sp_set_dtr(serial_port, SP_DTR_ON) != SP_OK )
+                exit(2);
             break;
         case SNET_HAL_DIR_TX:
+            if( sp_set_dtr(serial_port, SP_DTR_OFF) != SP_OK )
+                exit(2);
             break;
-    }
+        }
 }
 
 uint32_t 

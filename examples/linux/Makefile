@@ -38,7 +38,7 @@ CFLAGS += $(addprefix -I, $(INCLUDE))
 # We'll only enable warnings on our code.
 CFLAGS_WARN += -Wall -Werror -Wno-format
 
-LFLAGS += -flto -lpthread
+LFLAGS += -flto -lpthread -lserialport
 LFLAGS += -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
 
 OBJS = $(addprefix $(BUILD_DIR)/src/, $(SRCS_C:.c=.o)) \
