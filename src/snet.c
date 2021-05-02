@@ -29,7 +29,7 @@ static snet_stack_ctx stack_ctx = {
 
 //Time before we resend after waiting for an ACK 
 //#define SNET_ACK_TIMEOUT ((uint32_t) SNET_PKT_HEADER_TIME * 2 )
-#define SNET_ACK_TIMEOUT (1)
+#define SNET_ACK_TIMEOUT (10)
 //Time to wait after bus idle before packet send.
 #define SNET_PKT_CA_TIME(N) ( SNET_ACK_TIMEOUT * ( 1 + (N) ) )
 
@@ -141,6 +141,7 @@ snet_update(void)
 				snet_hal_transmit( (uint8_t*)&stack_ctx.tx_pkt.crc, sizeof(stack_ctx.tx_pkt.crc) );
 			}
 
+
 			//TX Queued
 			stack_ctx.tx_state = SNET_TX_TRANSMITTING;
 			/* Intentional fall through */
@@ -148,14 +149,18 @@ snet_update(void)
 		case SNET_TX_TRANSMITTING:
 		{
 			DEBUG("STATE: TX_TRANSMITTING\n");
+			
 			//Micro is still sending data
 			if( snet_hal_is_transmitting() ) break;
 
 			//TX is finished, we can switch back to Listening.
+
 			snet_hal_set_direction( SNET_HAL_DIR_RX );
+
 			//Record time TX finished, so we can judge when to retransmit.
 			//Also count as RX so we dont DOS the bus (for random waits).
 			stack_ctx.last_rx_tick = stack_ctx.tx_tick = snet_hal_get_ticks();
+
 			//Decide next state based on REQACK flag
 			if( stack_ctx.tx_pkt.header.flags & SNET_PKT_FLAG_REQACK )
 			{
@@ -268,18 +273,20 @@ snet_update(void)
 				//rx the data portion of the packet + maybe a crc
 				//
 				size_t buf_s = lwrb_get_full(&stack_ctx.rx_rb);
-				size_t skip = MIN(buf_s, stack_ctx.data_length_remaining);
+				size_t recv_len = MIN(buf_s, stack_ctx.data_length_remaining);
 
-				if( skip )
+				if( recv_len )
 				{
-					lwrb_advance(&stack_ctx.rx_rb, skip); //skip of data
-					stack_ctx.data_length_remaining -= skip;
+					//Calc buffer offset.
+					size_t offset = stack_ctx.rx_pkt.header.data_length - stack_ctx.data_length_remaining;
+					lwrb_read(&stack_ctx.rx_rb, &stack_ctx.rx_pkt.data[offset], recv_len);
+					stack_ctx.data_length_remaining -= recv_len;
 				}
 			}
 			else
 			{
 				/* Now we need to check if we need to find the CRC */
-				if( stack_ctx.rx_pkt.header.flags & SNET_PKT_FLAG_CRC != 0 )
+				if( stack_ctx.rx_pkt.header.flags & SNET_PKT_FLAG_CRC )
 				{
 					if( lwrb_get_full(&stack_ctx.rx_rb) < 4 )
 					{

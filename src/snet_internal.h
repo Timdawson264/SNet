@@ -49,7 +49,7 @@ typedef struct
 	snet_pkt_header header;
 	
 	/* if header.data_length = 0 then below is not TXed */
-	uint8_t data [SNET_HAL_MTU]; /* header.data_length octets */
+	uint8_t data[SNET_HAL_MTU]; /* header.data_length octets */
 	uint32_t crc; /* Send if SNET_PKT_FLAG_CRC is set. */
 	uint8_t priority; /* 0 - 7, default is 4, ACK is 0. TX Collision avoid multiplier. */ 
 } snet_pkt;
@@ -83,6 +83,7 @@ typedef struct
     RX_STATE rx_state;
     snet_pkt rx_pkt;
     lwrb_t rx_rb; /* Async RX ringbuffer irq -> update loop */
+	/*data left to recv */
 	uint8_t data_length_remaining;
 
 	/* This tracks the last time bytes were recived on the bus */	
@@ -93,6 +94,8 @@ typedef struct
 	/* This tracks the last TX frame sent, used for retransmit when REQACK set. */
 	/* This is also used for random waiting on TX wait state */
 	uint32_t tx_tick;
+	/* Number of TX attempts left with no ACK/Corrupt responses */
+	uint8_t tx_retries_remaining;
 
 	/* Used for tx collition avoidance */
 	uint8_t random;
