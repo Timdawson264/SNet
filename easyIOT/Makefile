@@ -1,5 +1,5 @@
 
-DEVICE_DESC = $(patsubst %.json,%.h,$(wildcard *.json))
+DEVICE_DESC = $(patsubst %.json,%.h,$(wildcard devices/*.json))
 
 
 all: easyiot.h $(DEVICE_DESC)
@@ -8,7 +8,7 @@ easyiot.h : easyiot.fbs
 	flatcc -ga $< --outfile $@        
 
 %.bin : %.json
-	flatc -b device_description.fbs $<
+	flatc -b -o $(dir $<) device_description.fbs $<
 
 %.h : %.bin
 	xxd -i $< $@
