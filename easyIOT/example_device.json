@@ -1,0 +1,27 @@
+{
+    "deviceid": "deviceid",
+    "hwrevision": "v0.0.0",
+    "device_description": "this is an example device to show how to generate binary blobs",
+    "inout_desc": [
+        {
+            "id": 1,
+            "type": "Doutput",
+            "description": "Light zone 1"
+        },
+        {
+            "id": 2,
+            "type": "Dinput",
+            "description": "Light zone 1 wall switch"
+        },
+        {
+            "id": 3,
+            "type": "Aoutputf",
+            "description": "room temp setpoint degress C"
+        },
+        {
+            "id": 4,
+            "type": "Ainputf",
+            "description": "room temp degress C"
+        }
+    ]
+}

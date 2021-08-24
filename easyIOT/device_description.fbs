@@ -1,0 +1,23 @@
+namespace easyIOT;
+
+
+enum io_type : uint8 { Dinput = 0, Doutput, Ainputf, Aoutputf }
+
+
+table io_description {
+    ///IO ID, Used in set_output and get_input.
+    id:uint8;
+    type:io_type;
+    ///May contain anystring that describes what this io is physically connected to
+    description:string;
+}
+
+/// This Describes a device and its inputs and outputs.
+table desc_message {
+    deviceid:string;
+    hwrevision:string;
+    device_description:string;
+    inout_desc:[io_description];
+}
+
+root_type desc_message;
