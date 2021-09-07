@@ -78,10 +78,12 @@ snet_update(void)
 	switch( (stack_ctx.tx_state) )
 	{
 		/* Do nothing we have no TX work todo */
+		/*
 		case SNET_TX_IDLE: 
 		{	
 			break;
 		}
+		*/
 		/* Check if Bus is IDLE, if not we must wait a random delay */
 		case SNET_TX_PREP:
 		{
@@ -135,7 +137,11 @@ snet_update(void)
 			//TODO: Switch to iovec and async
 			snet_pkt_hdr_endian_swap( &stack_ctx.tx_pkt.header );
 			snet_hal_transmit( (uint8_t*)&stack_ctx.tx_pkt.header, SNET_PKT_HEADER_LEN );
+			snet_pkt_hdr_endian_swap( &stack_ctx.tx_pkt.header );
+			
 			snet_hal_transmit( stack_ctx.tx_pkt.data, stack_ctx.tx_pkt.header.data_length );
+
+			//TODO: Suppport iostreams - to allow low memory messages.
 			if( stack_ctx.tx_pkt.header.flags & SNET_PKT_FLAG_CRC )
 			{
 				snet_hal_transmit( (uint8_t*)&stack_ctx.tx_pkt.crc, sizeof(stack_ctx.tx_pkt.crc) );
@@ -197,11 +203,13 @@ snet_update(void)
 		{
 			DEBUG("STATE: SNET_RX_PREAMBLE\n");
 
+#ifdef SNET_DEBUG
 			size_t rx_len = lwrb_get_full(&stack_ctx.rx_rb);
 			if (rx_len>0)
 			{
 				DEBUG("RECV: %i Bytes\n", rx_len);
 			}
+#endif
 
 			//while we are in this state and there is bytes to check.
 			while( (stack_ctx.rx_state == SNET_RX_PREAMBLE) && ( lwrb_get_full( &stack_ctx.rx_rb ) > 0 ) )
@@ -234,7 +242,7 @@ snet_update(void)
 			//see if we have a full header worth of data.
 			if (lwrb_get_full(&stack_ctx.rx_rb) < SNET_PKT_HEADER_LEN)
 			{
-				//lets not wait forever
+				//lets not wait forever - last_rx_tick set by snet stack in RX function.
 				uint32_t timeout = snet_hal_get_ticks() - stack_ctx.last_rx_tick;
 				if ( timeout > SNET_RX_TIMEOUT )
 				{
@@ -245,7 +253,7 @@ snet_update(void)
 
 			lwrb_read(&stack_ctx.rx_rb, (void *)&stack_ctx.rx_pkt.header, SNET_PKT_HEADER_LEN);
 			uint8_t check = snet_calc_header_checksum( &stack_ctx.rx_pkt.header );
-			snet_pkt_hdr_endian_swap( &stack_ctx.rx_pkt.header );
+			snet_pkt_hdr_endian_swap( &stack_ctx.rx_pkt.header ); //byte ordering is not important, header checksum is commutative
 
 			snet_pkt_header *hdr = &stack_ctx.rx_pkt.header;
 			DEBUG("HDR:\n DST %u\n SRC: %u\n LEN: %u\n CHK: %u\n\n", hdr->dst_addr, hdr->src_addr, hdr->data_length, hdr->header_check);
@@ -259,6 +267,9 @@ snet_update(void)
 			}
 			else
 			{
+				//IF - ADDR = us or Braodcast and if MTU > MAX_MTU. 
+				//ELSE - 
+
 				//now get the data.
 				DEBUG("GOOD HEADER CHECK\n");
 				stack_ctx.data_length_remaining = stack_ctx.rx_pkt.header.data_length;
@@ -280,6 +291,7 @@ snet_update(void)
 					//Calc buffer offset.
 					size_t offset = stack_ctx.rx_pkt.header.data_length - stack_ctx.data_length_remaining;
 					lwrb_read(&stack_ctx.rx_rb, &stack_ctx.rx_pkt.data[offset], recv_len);
+					//TODO Also partial CRC could be done here. - if we need to
 					stack_ctx.data_length_remaining -= recv_len;
 				}
 			}
@@ -296,6 +308,9 @@ snet_update(void)
 					{
 						//read in CRC
 						lwrb_read(&stack_ctx.rx_rb, &stack_ctx.rx_pkt.crc, sizeof(stack_ctx.rx_pkt.crc) );
+						//TODO: Check the CRC is correct.
+						//If they match, we can continue.
+
 						stack_ctx.rx_state = SNET_RX_FINAL;
 					}
 				}
@@ -306,14 +321,45 @@ snet_update(void)
 			}
 			break;
 		}
+		case SNET_RX_SKIP_DATA:
+		{
+			if( stack_ctx.data_length_remaining > 0 )
+			{
+				size_t buf_s = lwrb_get_full(&stack_ctx.rx_rb); //Data in Buf
+				size_t len = MIN(buf_s, stack_ctx.data_length_remaining); //ammount to skip
+				lwrb_skip( &stack_ctx.rx_rb, len );
+				stack_ctx.data_length_remaining -= len;
+			}
+			else
+			{
+				stack_ctx.rx_state = SNET_RX_PREAMBLE; //NEXT PACKET.
+			}
+			break;
+		}
 		case SNET_RX_FINAL:
 		{
 
 			stack_ctx.rx_state = SNET_RX_PREAMBLE;
 			DEBUG("STATE: SNET_RX_FINAL\n");
 			//Check optional CRC if its there.
-			//Queue optional ACK
 			//handoff packet.
+
+			//SEND The ACK. - dont need to check the bus as we still have authority. straight after the RX Finished.
+			if( stack_ctx.rx_pkt.header.flags & SNET_PKT_FLAG_REQACK )
+			{
+				//SEND ACK.
+				stack_ctx.rx_ack_hdr.preamble = 0xAA;
+				stack_ctx.rx_ack_hdr.flags = SNET_PKT_FLAG_ACK;
+				stack_ctx.rx_ack_hdr.dst_addr = stack_ctx.rx_pkt.header.src_addr;
+				stack_ctx.rx_ack_hdr.src_addr = stack_ctx.ADDR;
+				stack_ctx.rx_ack_hdr.data_length = 0;
+				stack_ctx.rx_ack_hdr.header_check = snet_calc_header_checksum( &stack_ctx.rx_ack_hdr );
+				snet_pkt_hdr_endian_swap( &stack_ctx.rx_ack_hdr ); //CPU -> NETWORK.
+
+				snet_hal_set_direction( SNET_HAL_DIR_TX );
+				snet_hal_transmit( (uint8_t*) &stack_ctx.rx_ack_hdr, SNET_PKT_HEADER_LEN );
+
+			}
 
 			break;
 		}
@@ -344,7 +390,7 @@ snet_calc_header_checksum( snet_pkt_header *pkt_header )
 }
 
 bool
-snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack, bool crc, uint8_t priority )
+snet_send( uint8_t* data, uint16_t length, snet_addr_t dst_addr, bool req_ack, bool crc, uint8_t priority )
 {
 	if( stack_ctx.tx_state != SNET_TX_IDLE )
 			return false;

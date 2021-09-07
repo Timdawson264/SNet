@@ -4,7 +4,7 @@
 uint32_t
 snet_crc32_bitwise(const uint8_t* data, uint16_t length)
 {
-const uint32_t Polynomial = 0xEDB88320;
+  const uint32_t Polynomial = 0xEDB88320;
   uint32_t crc = 0xFFFFFFFF; // same as previousCrc32 ^ 0xFFFFFFFF
   const uint8_t* current = (const uint8_t*) data;
 

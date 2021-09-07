@@ -5,7 +5,7 @@ SRCS_C = \
     snet_hal.c \
     systick.c
 
-INCLUDE = src
+INCLUDE = src /usr/local/include /Users/tim/Downloads/nanopb-0.4.5-macosx-x86
 
 BUILD_DIR = build
 
@@ -17,10 +17,11 @@ SNET_DIR ?= ../..
 SNET_SRCS_C = \
     src/snet.c \
     src/util/crc32.c \
-	src/util/rand.c \
-	src/lwrb/lwrb/src/lwrb/lwrb.c
+    src/util/rand.c \
+    src/lwrb/lwrb/src/lwrb/lwrb.c \
+    easyiot/easyiot.pb.c
 
-SNET_INCLUDE = src src/util src/lwrb/lwrb/src/include
+SNET_INCLUDE = src src/util src/lwrb/lwrb/src/include easyiot
 
 INCLUDE += $(addprefix $(SNET_DIR)/, $(SNET_INCLUDE))
 
@@ -47,13 +48,13 @@ INCLUDE += $(addprefix $(STM_DIR)/, $(STM_INCLUDE))
 
 
 CFLAGS += $(XCFLAGS)
-CFLAGS += -D$(TARGET) -mstm8
+CFLAGS += -D$(TARGET) -mstm8 --out-fmt-elf
 CFLAGS += --opt-code-size -MMD
 CFLAGS += --std-sdcc99
 CFLAGS += $(addprefix -I, $(INCLUDE))
-#CFLAGS_WARN += --Werror 
+CFLAGS_WARN += --Werror 
 
-LFLAGS += -L ./build -lall.a
+LFLAGS += -L ./build -lall.a -Wl "-mwq" -Wl "-I 1000" -Wl "-C 8000"
 
 OBJS = 	$(addprefix $(BUILD_DIR)/src/, $(SRCS_C:.c=.rel) ) \
 		$(addprefix $(BUILD_DIR)/snet/, $(SNET_SRCS_C:.c=.rel) ) \
@@ -90,8 +91,8 @@ $(BUILD_DIR)/all.a: $(OBJS)
 $(BUILD_DIR)/$(TARGET).ihx: build/src/main.rel build/all.a
 	$(MKDIR) -p $(dir $@)
 	$(CC) $(CFLAGS) $(LFLAGS) --out-fmt-ihx -o $@ $<
-	$(CC) $(CFLAGS) $(LFLAGS) --out-fmt-elf -o $(@:.ihx=.elf) $<
-	size $(@:.ihx=.elf)
+	# $(CC) $(CFLAGS) $(LFLAGS) --out-fmt-elf -o $(@:.ihx=.elf) $<
+	# size $(@:.ihx=.elf)
 
 flash: $(BUILD_DIR)/$(TARGET).ihx
 	stm8flash -c stlinkv2 -w $< -p stm8s103f3
@@ -101,7 +102,7 @@ flash: $(BUILD_DIR)/$(TARGET).ihx
 #
 # TOOLCHAIN
 #
-CC=~/Downloads/sdcc-4.1.0/bin/sdcc
-AR=~/Downloads/sdcc-4.1.0/bin/sdar
-OBJCOPY=~/Downloads/sdcc-4.1.0/bin/sdobjcopy
+CC=sdcc
+AR=sdar
+OBJCOPY=sdobjcopy
 MKDIR=mkdir

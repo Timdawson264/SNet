@@ -16,6 +16,7 @@
 
 /** Bus max packet size for this device */
 #define SNET_HAL_MTU (64)
+#define SNET_BROADCAST_ADDR (0xffff)
 
 typedef enum
 {
@@ -32,17 +33,20 @@ typedef enum
 	#define PKATTR
 #endif
 
+//BAD EVALS X and Y twice. done use funcs.
 #define MIN(X,Y) ( (X) < (Y) ? (X) : (Y) )
 
 typedef struct
 {
     uint8_t preamble; /* 0xAA */
-    uint16_t dst_addr; 
-    uint16_t src_addr;
+    snet_addr_t dst_addr; 
+    snet_addr_t src_addr;
     uint8_t flags; /* feature flats, REQACK,ACK,Jumbo Frame,CRC  */
     uint8_t data_length;
     uint8_t header_check; /* sum of header bytes MOD 255 of all previouse fields */    
 } PKATTR snet_pkt_header;
+
+#define SNET_PKT_HEADER_LEN (sizeof( snet_pkt_header ))
 
 typedef struct 
 {
@@ -54,7 +58,6 @@ typedef struct
 	uint8_t priority; /* 0 - 7, default is 4, ACK is 0. TX Collision avoid multiplier. */ 
 } snet_pkt;
 
-#define SNET_PKT_HEADER_LEN sizeof( snet_pkt_header )
 
 typedef enum
 {
@@ -72,16 +75,18 @@ typedef enum
 	SNET_RX_PREAMBLE, /* RX 0xAA */
 	SNET_RX_HEADER, /* Looking for a valid packet header */
 	SNET_RX_DATA, /* Copying data bytes and calculating CRC */
+	SNET_RX_SKIP_DATA, /* Same as above but dont keep anything */ 
 	SNET_RX_FINAL /* Header and Data Assembled, Just need to call CBs etc. */
 } RX_STATE;
 
 typedef struct
 {
 	/* Address of this node */
-	const uint16_t ADDR;
+	const snet_addr_t ADDR;
 
     RX_STATE rx_state;
     snet_pkt rx_pkt;
+	snet_pkt_header rx_ack_hdr;
     lwrb_t rx_rb; /* Async RX ringbuffer irq -> update loop */
 	/*data left to recv */
 	uint8_t data_length_remaining;

@@ -4,7 +4,7 @@
 //Incremented by the Timer on each update.
 static uint32_t systick_ovf_counter = 0;
 
-// 16Mhz / 128 = 125000Hz (8us)  into timer
+// 16Mhz / 128 = 125000Hz (8us) into timer
 #define F_CLK ( 16000000ul )
 #define T_CLK ( F_CLK / 128 )
 //Microsecond multiplier, if the T_CLK -is less the 1Mhz
@@ -21,6 +21,7 @@ void systick_init(void)
 
 //On Each overflow we record that this happened
 //We are using the Timer + Overflow count as the Tick counter
+//This allows this IRQ to run every 2ms and still get 8us of acurracy. 
 void Systick_IRQ(void) __interrupt(23)
 {
     TIM4->SR1 &=~ 0x01; //Clear IT flag
@@ -33,28 +34,30 @@ systick_epoch_us(void)
 	uint32_t m;
 	uint8_t f;
 
-	//do a double read
+	//do a double read - avoid race condition with ovf + timer.
 	do {
 		m = systick_ovf_counter;		    //read the overflow counter
 		f = TIM4->CNTR;						//read the least significant 8-bits
 	} while (m != systick_ovf_counter);		//gaurd against overflow
 
-	return (m | f) * FT_RATIO; //*FT_RATIO(8)
+	return (m | f) * FT_RATIO; //*FT_RATIO=8 the input to the TIM4 is 8us. 
 }
 
 uint32_t 
 systick_epoch_ms(void) 
 {
-    return systick_epoch_us()/1000;
+	//Div is expensive. should shift by 1024... close enough eah
+	//Should be /1000
+    return systick_epoch_us() >> 10;
 }
 
 void 
 systick_delayms(uint32_t ms) 
 {
-	uint32_t start_time = systick_epoch_us();
+	uint32_t start_time = systick_epoch_ms();
 
-	ms *= 1000; //convert ms to us
-	while (systick_epoch_us() - start_time < ms) continue;	//wait for timer to expire
+	ms *= 1000; 
+	while (systick_epoch_ms() - start_time < ms) continue;	//wait for timer to expire
 }
 
 void 

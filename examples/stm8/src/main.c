@@ -3,6 +3,13 @@
 #include "snet.h"
 #include "systick.h"
 
+
+//#include "example_device.h"
+#define PB_BUFFER_ONLY 1
+#define PB_WITHOUT_64BIT 1
+
+#include "easyiot.pb.h"
+
 //Main must contain the Decl of the IRQ funcs
 void Systick_IRQ(void) __interrupt(23);
 void UART1_RX_IRQHandler(void) __interrupt(18);
@@ -45,9 +52,10 @@ void main()
         uint32_t loop_ms = systick_epoch_ms();
         snet_update();
 
-        if( loop_ms - loop_LED > 500 )
+        if( loop_ms - loop_LED > 5000 )
         {
-            if( snet_send( "Hello\n", 6, 0xFFFF, false, true, 1 ) )
+            //send the device description
+            if( snet_send( "hello" , 6 , 0xFFFF, false, true, 1 ) )
             {
                 //poll this untill send every x ms
                 loop_LED = loop_ms; 

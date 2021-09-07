@@ -1,0 +1,12 @@
+
+
+
+device_description.device_name type:FT_STATIC, max_size:64, 
+device_description.ios max_count:8, type:FT_STATIC
+
+io_description.description type:FT_POINTER, max_size:32
+
+io_val.id int_size:IS_8
+get_ios.ids int_size:IS_8
+get_ios_resp.ios  type:FT_CALLBACK, max_count:8
+set_ios.ios  type:FT_CALLBACK, max_count:8

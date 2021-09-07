@@ -31,7 +31,6 @@ typedef enum snet_hal_direction_t
 void
 snet_hal_init(void);
 
-
 /**
  * Implemented by the HAL layer to send data onto the bus.
  *
@@ -43,38 +42,6 @@ snet_hal_init(void);
  */
 void
 snet_hal_transmit(uint8_t *data, uint16_t length);
-
-
-/**
- * Implemented within SNet to allow the HAL layer to pass received data up.
- *
- * @note this may be called from an interrupt context. Received data wont be
- * processed until @ref snet_update() is called.
- *
- * @note it is assumed the data pointer will only be valid for the duration of
- * this function call. I.e. the caller may free the data once this function has
- * returned.
- *
- * @param data the buffer with the received data.
- * @param length the number of octets received.
- *
- * @returns the number of octets copied into @ref data.
- */
-void
-snet_hal_receive(uint8_t *data, uint16_t length);
-
-/**
- * Implemented within SNet to allow the HAL layer to pass received data up.
- *
- * @note this may be called from an interrupt context. Received data wont be
- * processed until @ref snet_update() is called.
- *
- * @param data the received octet.
- *
- * @returns the number of octets copied into @ref data.
- */
-void
-snet_hal_receive_byte(uint8_t data);
 
 
 /**
@@ -124,9 +91,6 @@ typedef struct iovec_t
 	uint8_t* data;
 	uint8_t length;
 } iovec_t;
-
-
-/* TODO: We'll probably want a means to schedule a hardware timer interrupt. */
 
 
 #endif

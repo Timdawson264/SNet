@@ -1,7 +1,7 @@
 
 #include <stdlib.h>
 #include "stm8s_conf.h"
-#include "snet_hal.h"
+#include "snet.h"
 #include "systick.h"
 
 void snet_hal_init(void)
