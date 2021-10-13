@@ -129,6 +129,7 @@ snet_update(void)
 			}
 			break;
 		}
+		/* Send Bytes Down the bus */
 		case SNET_TX_TRANSMIT_START:
 		{
 			DEBUG("STATE: TX_TRANSMIT_START\n");
@@ -152,6 +153,7 @@ snet_update(void)
 			stack_ctx.tx_state = SNET_TX_TRANSMITTING;
 			/* Intentional fall through */
 		}
+		/* Wait for TX to compleate Branch to IDLE or ACK WAIT*/
 		case SNET_TX_TRANSMITTING:
 		{
 			DEBUG("STATE: TX_TRANSMITTING\n");
@@ -180,6 +182,7 @@ snet_update(void)
 			}
 			break;
 		}
+		/* This state is moved using the RX state Machine / timeout */
 		case SNET_TX_ACK_WAIT:
 		{	
 			DEBUG("STATE: TX_ACK_WAIT\n");
@@ -267,6 +270,7 @@ snet_update(void)
 			}
 			else
 			{
+				//TODO: CHECK SRC and DEST ADDR. Check if we are waiting on ACK
 				//IF - ADDR = us or Braodcast and if MTU > MAX_MTU. 
 				//ELSE - 
 
