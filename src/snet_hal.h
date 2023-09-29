@@ -25,6 +25,16 @@ typedef enum snet_hal_direction_t
     SNET_HAL_DIR_RX
 } snet_hal_direction_t;
 
+/**
+ * Data structer that holds data and length info.
+ * used to pass multiple buffers to the TX
+ */
+typedef struct iovec_t
+{
+	uint8_t* data;
+	uint16_t length;
+} iovec_t;
+
 
 /**
  * Initialises the HAL for use. This will be called before any other HAL
@@ -38,13 +48,14 @@ snet_hal_init(void);
  * Implemented by the HAL layer to send data onto the bus.
  *
  * @note The HAL layer should assume the bus is ready to go and send
- * immediately.
+ * immediately. Also this function can be Asyncronouse, as it will not be
+ * called again until snet_hal_is_transmitting() returns false.
  *
- * @param data the buffer to transmit.
- * @param length the number of octets to send.
+ * @param iovec the buffers to transmit, will not change until transmit completed.
+ * @param number the number of iovecs.
  */
 void
-snet_hal_transmit(uint8_t *data, uint16_t length);
+snet_hal_transmit(iovec_t *vec, uint8_t number);
 
 
 /**
@@ -94,15 +105,6 @@ snet_hal_set_direction(snet_hal_direction_t direction);
 //~ uint32_t
 //~ snet_hal_calc_crc32( uint8_t* data, uint16_t length ) __attribute__((weak, alias("snet_crc32_bitwise"))) ;
 
-/**
- * Data structer that holds data and length info.
- * used to pass multiple buffers to the TX
- */
-typedef struct iovec_t
-{
-	uint8_t* data;
-	uint16_t length;
-} iovec_t;
 
 
 /* TODO: We'll probably want a means to schedule a hardware timer interrupt. */

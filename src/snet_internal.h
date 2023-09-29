@@ -36,6 +36,9 @@ typedef struct
 	uint8_t* data; /* header.data_length octets */
 	uint32_t crc;
 	uint8_t priority; /* 0 - 7, default is 7, ACK is 0 */ 
+	
+	iovec_t iovec[3]; /* used for Transmitting */
+	
 } snet_pkt;
 
 #define SNET_PKT_HEADER_LEN sizeof( snet_pkt_header )

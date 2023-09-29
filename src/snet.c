@@ -5,6 +5,10 @@
 #define SNET_DEBUG
 #include "snet_internal.h"
 
+
+#define MIN_WAIT_BYTES 1024 
+#define MAX_ACK_WAIT 512
+
 //TODO: Consider Async TX
 static uint8_t rx_buf[64];
 static snet_stack_ctx stack_ctx;
@@ -23,6 +27,14 @@ snet_init(void)
     stack_ctx.ADDR = 1;
 }
 
+
+void 
+snet_tx_do_CA(void)
+{
+	//wait random number of bytes + ack wait 
+	
+}
+
 void
 snet_update(void)
 {
@@ -35,13 +47,24 @@ snet_update(void)
 		}
 		case SNET_TX_BUS_WAIT:
 		{
-			//DO collision avoidance here
 			
-			//TODO: Switch to iovec and async
-			snet_hal_transmit( (uint8_t*)&stack_ctx.tx_pkt.header, SNET_PKT_HEADER_LEN );
-			snet_hal_transmit( stack_ctx.tx_pkt.data, stack_ctx.tx_pkt.header.data_length );
-			snet_hal_transmit( (uint8_t*)&stack_ctx.tx_pkt.crc, sizeof(stack_ctx.tx_pkt.crc) );
-			break;
+			
+			
+			//DO collision avoidance here
+			iovec_t* iovec = &stack_ctx.tx_pkt.iovec;
+						
+			iovec[0].data = (uint8_t*)&stack_ctx.tx_pkt.header;
+			iovec[0].length = SNET_PKT_HEADER_LEN;
+			iovec[1].data = stack_ctx.tx_pkt.data
+			iovec[1].length = stack_ctx.tx_pkt.header.data_length
+			iovec[2].data = (uint8_t*)&stack_ctx.tx_pkt.crc
+			iovec[2].length = sizeof(stack_ctx.tx_pkt.crc)	
+
+			/* Put the data on the wire */
+			snet_hal_transmit( iovec, 3 );
+			
+			/* Fall to next state */
+			stack_ctx.tx_state = SNET_TX_TRANSMITTING;
 		}
 		case SNET_TX_TRANSMITTING:
 		{
@@ -50,9 +73,9 @@ snet_update(void)
 				
 			if( stack_ctx.tx_pkt.header.flags & SNET_PKT_FLAG_REQACK != 0 )
 			{
-				//We need to now wait for the ack
-				stack_ctx.tx_state = SNET_TX_ACK_WAIT;
 				//TODO: record systick time for retry timing
+				//We need to now wait for the ack
+				stack_ctx.tx_state = SNET_TX_ACK_WAIT
 			}
 			else
 			{
@@ -123,6 +146,7 @@ snet_calc_header_checksum( snet_pkt_header *pkt_header )
 bool
 snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack )
 {
+	//IF we are doing anything that is not IDLE then we cant send this packet
 	if( stack_ctx.tx_state != SNET_TX_IDLE )
 			return false;
 			
@@ -144,7 +168,6 @@ snet_send( uint8_t* data, uint16_t length, uint16_t dst_addr, bool req_ack )
 	
 	return true;
 }
-
 
 void
 snet_hal_receive(uint8_t *data, uint16_t length)

@@ -39,17 +39,23 @@ snet_hal_init(void)
 
 
 void
-snet_hal_transmit(uint8_t *data, uint16_t length)
+snet_hal_transmit(iovec_t *vec, uint8_t number)
 {
-    uint16_t i;
+    uint16_t i,v;
 
-    for (i = 0; i < length; i++)
-    {
-        while (!(huart.Instance->SR & UART_FLAG_TXE))
-            ;
+	for (v = 0; v < number; v++)
+	{
+		uint8_t* data = vec[v].data;
+		uint16_t length = vec[v].length;
+		
+		for (i = 0; i < length; i++)
+		{
+			while (!(huart.Instance->SR & UART_FLAG_TXE))
+				;
 
-        huart.Instance->DR = data[i];
-    }
+			huart.Instance->DR = data[i];
+		}
+	}
 }
 
 
